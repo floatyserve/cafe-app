@@ -1,0 +1,10 @@
+# --- IDE Configuration Files ---
+.idea/
+.vscode/
+*.iml
+
+# --- OS Generated Files ---
+.DS_Store
+Thumbs.db
+
+.env
