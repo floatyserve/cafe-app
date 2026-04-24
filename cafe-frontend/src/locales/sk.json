@@ -1,0 +1,18 @@
+{
+  "nav": {
+    "waiter": "Čašník",
+    "kitchen": "Kuchyňa",
+    "bar": "Bar",
+    "settings": "Nastavenia"
+  },
+  "settings": {
+    "title": "Nastavenia",
+    "appearance": "Vzhľad",
+    "language": "Jazyk",
+    "theme": {
+      "light": "Svetlý",
+      "dark": "Tmavý",
+      "system": "Systémový"
+    }
+  }
+}

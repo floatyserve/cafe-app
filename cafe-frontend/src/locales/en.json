@@ -1,0 +1,18 @@
+{
+  "nav": {
+    "waiter": "Waiter",
+    "kitchen": "Kitchen",
+    "bar": "Bar",
+    "settings": "Settings"
+  },
+  "settings": {
+    "title": "Settings",
+    "appearance": "Appearance",
+    "language": "Language",
+    "theme": {
+      "light": "Light",
+      "dark": "Dark",
+      "system": "System"
+    }
+  }
+}

@@ -1,1 +1,51 @@
 @import "tailwindcss";
+
+@layer base {
+    :root {
+        --bg-color: #FDFBF7;
+        --surface-color: #FFFFFF;
+        --surface-hover: #F4EFEA;
+        --text-main: #2C1E16;
+        --text-muted: #7A6354;
+        --border-color: #E6D5C3;
+    }
+
+    .dark {
+        --bg-color: #120E0B;
+        --surface-color: #1C1612;
+        --surface-hover: #2A211B;
+        --text-main: #EAE0D5;
+        --text-muted: #9A8C82;
+        --border-color: #382C24;
+    }
+}
+
+@theme {
+    --color-cafe-primary: #6F4E37;
+    --color-cafe-accent: #E86A33;
+
+    --color-cafe-bg: var(--bg-color);
+    --color-cafe-surface: var(--surface-color);
+    --color-cafe-surface-hover: var(--surface-hover);
+    --color-cafe-text-main: var(--text-main);
+    --color-cafe-text-muted: var(--text-muted);
+    --color-cafe-secondary: var(--border-color);
+
+    --color-status-pending: #F59E0B;
+    --color-status-preparing: #3B82F6;
+    --color-status-ready: #10B981;
+    --color-status-paid: #6B7280;
+
+    --spacing-icon-sm: 1rem;
+    --spacing-icon-base: 1.25rem;
+    --spacing-icon-lg: 1.5rem;
+
+    --font-sans: 'Inter', ui-sans-serif, system-ui, sans-serif;
+}
+
+@layer base {
+    body {
+        background-color: var(--color-cafe-bg);
+        color: var(--color-cafe-text-main);
+    }
+}
