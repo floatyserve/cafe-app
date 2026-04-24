@@ -4,10 +4,16 @@ import { Coffee, ChefHat, GlassWater, Settings, Menu } from 'lucide-react';
 import { cn } from '../../lib/utils';
 import { useTranslation } from 'react-i18next';
 
-function AppLayout() {
+const getNavLinkClass = (isActive: boolean, isSidebarOpen: boolean) => cn(
+    "flex items-center gap-3 py-3 rounded-xl transition-all font-medium",
+    isSidebarOpen ? "px-4 w-full" : "justify-center w-12 mx-auto",
+    isActive
+        ? "bg-cafe-primary text-white shadow-md"
+        : "text-cafe-text-muted hover:bg-cafe-surface-hover hover:text-cafe-text-main"
+);
 
+export default function AppLayout() {
     const [isSidebarOpen, setIsSidebarOpen] = useState(true);
-
     const { t } = useTranslation();
 
     const navLinks = [
@@ -55,15 +61,7 @@ function AppLayout() {
                             <NavLink
                                 key={link.name}
                                 to={link.path}
-                                className={({ isActive }) =>
-                                    cn(
-                                        "flex items-center gap-3 py-3 rounded-xl transition-all font-medium",
-                                        isSidebarOpen ? "px-4 w-full" : "justify-center w-12 mx-auto",
-                                        isActive
-                                            ? "bg-cafe-primary text-white shadow-md"
-                                            : "text-cafe-text-muted hover:bg-cafe-surface-hover hover:text-cafe-text-main"
-                                    )
-                                }
+                                className={({ isActive }) => getNavLinkClass(isActive, isSidebarOpen)}
                                 title={!isSidebarOpen ? link.name : undefined}
                             >
                                 <Icon className="size-icon-base" />
@@ -76,15 +74,8 @@ function AppLayout() {
                 <div className="p-4 w-full border-t border-cafe-secondary/30">
                     <NavLink
                         to="/settings"
-                        className={({ isActive }) =>
-                            cn(
-                                "flex items-center gap-3 py-3 rounded-xl transition-all font-medium",
-                                isSidebarOpen ? "px-4 w-full" : "justify-center w-12 mx-auto",
-                                isActive
-                                    ? "bg-cafe-primary text-white shadow-md"
-                                    : "text-cafe-text-muted hover:bg-cafe-surface-hover hover:text-cafe-text-main"
-                            )
-                        }
+                        className={({ isActive }) => getNavLinkClass(isActive, isSidebarOpen)}
+                        title={!isSidebarOpen ? t('nav.settings') : undefined}
                     >
                         <Settings className="size-icon-base" />
                         {isSidebarOpen && <span>{t('nav.settings')}</span>}
@@ -99,5 +90,3 @@ function AppLayout() {
         </div>
     );
 }
-
-export default AppLayout;

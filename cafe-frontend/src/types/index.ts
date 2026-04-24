@@ -1,5 +1,8 @@
 export type Category = 'MEAL' | 'DRINK' | 'DESSERT';
-export type OrderStatus = 'PENDING' | 'PREPARING' | 'READY' | 'PAID';
+
+export type OrderStatus = 'OPEN' | 'PAID';
+
+export type ItemStatus = 'PENDING' | 'PREPARING' | 'READY' | 'SERVED';
 
 export interface MenuItem {
     id: number;
@@ -13,6 +16,7 @@ export interface OrderItem {
     menuItem: MenuItem;
     quantity: number;
     notes?: string;
+    status: ItemStatus;
 }
 
 export interface Order {
