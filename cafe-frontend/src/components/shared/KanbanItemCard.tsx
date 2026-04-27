@@ -1,5 +1,5 @@
 import { RotateCcw, Clock } from 'lucide-react';
-import type { OrderItem, ItemStatus } from '../../types';
+import type { OrderItem, ItemStatus, Category } from '../../types';
 import { cn } from '../../lib/utils';
 
 const CARD_STYLES: Record<ItemStatus, string> = {
@@ -12,7 +12,13 @@ const CARD_STYLES: Record<ItemStatus, string> = {
 const PRIMARY_BTN_BASE = "flex-1 text-white font-bold py-3 rounded-lg hover:opacity-90 transition-opacity";
 const UNDO_BTN_BASE = "p-3 border-2 border-cafe-secondary rounded-lg text-cafe-text-muted hover:bg-cafe-surface-hover transition-all flex justify-center items-center";
 
-interface KitchenItemCardProps {
+const CATEGORY_VERBS: Record<Category, { start: string, undo: string }> = {
+    MEAL: { start: 'Cook', undo: 'Undo to Cooking' },
+    DRINK: { start: 'Prepare', undo: 'Undo to Preparing' },
+    DESSERT: { start: 'Prepare', undo: 'Undo to Preparing' }
+};
+
+interface KanbanItemCardProps {
     orderId: number;
     item: OrderItem;
     createdAt: string;
@@ -20,12 +26,14 @@ interface KitchenItemCardProps {
     onUpdateStatus: (orderId: number, itemId: number, newStatus: ItemStatus) => void;
 }
 
-export default function KanbanItemCard({ orderId, item, createdAt, currentTime, onUpdateStatus }: KitchenItemCardProps) {
+export default function KanbanItemCard({ orderId, item, createdAt, currentTime, onUpdateStatus }: KanbanItemCardProps) {
 
     const start = new Date(createdAt).getTime();
     const diffMins = Math.floor((currentTime - start) / 60000);
     const timeText = diffMins < 1 ? 'Just now' : `${diffMins}m`;
     const isUrgent = diffMins >= 15;
+
+    const verbs = CATEGORY_VERBS[item.menuItem.category];
 
     return (
         <div className={cn(
@@ -65,7 +73,7 @@ export default function KanbanItemCard({ orderId, item, createdAt, currentTime, 
                         onClick={() => onUpdateStatus(orderId, item.id, 'PREPARING')}
                         className={cn(PRIMARY_BTN_BASE, "bg-status-pending")}
                     >
-                        Cook
+                        {verbs.start}
                     </button>
                 )}
 
@@ -92,7 +100,7 @@ export default function KanbanItemCard({ orderId, item, createdAt, currentTime, 
                         onClick={() => onUpdateStatus(orderId, item.id, 'PREPARING')}
                         className="flex-1 border-2 border-status-ready/50 text-status-ready font-bold py-3 rounded-lg hover:bg-status-ready/10 flex justify-center items-center gap-2 transition-colors"
                     >
-                        <RotateCcw className="size-icon-sm" /> Undo to Cooking
+                        <RotateCcw className="size-icon-sm" /> {verbs.undo}
                     </button>
                 )}
             </div>
