@@ -20,7 +20,7 @@ interface KitchenItemCardProps {
     onUpdateStatus: (orderId: number, itemId: number, newStatus: ItemStatus) => void;
 }
 
-export default function KitchenItemCard({ orderId, item, createdAt, currentTime, onUpdateStatus }: KitchenItemCardProps) {
+export default function KanbanItemCard({ orderId, item, createdAt, currentTime, onUpdateStatus }: KitchenItemCardProps) {
 
     const start = new Date(createdAt).getTime();
     const diffMins = Math.floor((currentTime - start) / 60000);
