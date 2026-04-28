@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { NavLink, Outlet } from 'react-router-dom';
-import { Coffee, ChefHat, GlassWater, Settings, Menu } from 'lucide-react';
+import { Coffee, ChefHat, GlassWater, Settings, Menu, Map } from 'lucide-react';
 import { cn } from '../../lib/utils';
 import { useTranslation } from 'react-i18next';
 
@@ -20,6 +20,7 @@ export default function AppLayout() {
         { name: t('nav.waiter'), path: '/waiter', icon: Coffee },
         { name: t('nav.kitchen'), path: '/kitchen', icon: ChefHat },
         { name: t('nav.bar'), path: '/bar', icon: GlassWater },
+        { name: t("nav.table-view"), path: '/table-view', icon: Map}
     ];
 
     return (

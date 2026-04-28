@@ -5,6 +5,7 @@ import WaiterPage from './pages/WaiterPage';
 import KitchenPage from './pages/KitchenPage';
 import BarPage from './pages/BarPage';
 import SettingsPage from "./pages/SettingsPage.tsx";
+import TableViewPage from "./pages/TableViewPage.tsx";
 
 function App() {
     return (
@@ -17,6 +18,7 @@ function App() {
                         <Route path="/waiter" element={<WaiterPage/>}/>
                         <Route path="/kitchen" element={<KitchenPage/>}/>
                         <Route path="/bar" element={<BarPage/>}/>
+                        <Route path="/table-view" element={<TableViewPage/>}/>
                         <Route path="/settings" element={<SettingsPage/>}/>
                     </Route>
                 </Routes>

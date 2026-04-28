@@ -3,7 +3,23 @@ import { useTheme } from '../components/ThemeProvider';
 import { Moon, Sun, Monitor, Globe } from 'lucide-react';
 import { cn } from '../lib/utils';
 
-function SettingsPage() {
+const THEME_OPTIONS = [
+    { id: 'light', icon: Sun, label: 'settings.theme.light' },
+    { id: 'dark', icon: Moon, label: 'settings.theme.dark' },
+    { id: 'system', icon: Monitor, label: 'settings.theme.system' }
+] as const;
+
+const LANG_OPTIONS = [
+    { id: 'en', label: 'English' },
+    { id: 'sk', label: 'Slovenčina' }
+] as const;
+
+const getActiveStyles = (isActive: boolean) =>
+    isActive
+        ? "border-cafe-primary bg-cafe-primary/5 text-cafe-primary"
+        : "border-cafe-secondary text-cafe-text-muted hover:bg-cafe-surface-hover";
+
+export default function SettingsPage() {
     const { t, i18n } = useTranslation();
     const { theme, setTheme } = useTheme();
 
@@ -22,44 +38,19 @@ function SettingsPage() {
                     </h2>
 
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                        <button
-                            onClick={() => setTheme('light')}
-                            className={cn(
-                                "flex flex-col items-center justify-center p-4 rounded-xl border-2 transition-all",
-                                theme === 'light'
-                                    ? "border-cafe-primary bg-cafe-primary/5 text-cafe-primary"
-                                    : "border-cafe-secondary text-cafe-text-muted hover:bg-cafe-surface-hover"
-                            )}
-                        >
-                            <Sun className="size-icon-lg mb-2" />
-                            <span className="font-medium">{t('settings.theme.light')}</span>
-                        </button>
-
-                        <button
-                            onClick={() => setTheme('dark')}
-                            className={cn(
-                                "flex flex-col items-center justify-center p-4 rounded-xl border-2 transition-all",
-                                theme === 'dark'
-                                    ? "border-cafe-primary bg-cafe-primary/5 text-cafe-primary"
-                                    : "border-cafe-secondary text-cafe-text-muted hover:bg-cafe-surface-hover"
-                            )}
-                        >
-                            <Moon className="size-icon-lg mb-2" />
-                            <span className="font-medium">{t('settings.theme.dark')}</span>
-                        </button>
-
-                        <button
-                            onClick={() => setTheme('system')}
-                            className={cn(
-                                "flex flex-col items-center justify-center p-4 rounded-xl border-2 transition-all",
-                                theme === 'system'
-                                    ? "border-cafe-primary bg-cafe-primary/5 text-cafe-primary"
-                                    : "border-cafe-secondary text-cafe-text-muted hover:bg-cafe-surface-hover"
-                            )}
-                        >
-                            <Monitor className="size-icon-lg mb-2" />
-                            <span className="font-medium">{t('settings.theme.system')}</span>
-                        </button>
+                        {THEME_OPTIONS.map(({ id, icon: Icon, label }) => (
+                            <button
+                                key={id}
+                                onClick={() => setTheme(id)}
+                                className={cn(
+                                    "flex flex-col items-center justify-center p-4 rounded-xl border-2 transition-all",
+                                    getActiveStyles(theme === id)
+                                )}
+                            >
+                                <Icon className="size-icon-lg mb-2" />
+                                <span className="font-medium">{t(label)}</span>
+                            </button>
+                        ))}
                     </div>
                 </section>
 
@@ -70,29 +61,18 @@ function SettingsPage() {
                     </h2>
 
                     <div className="flex gap-4">
-                        <button
-                            onClick={() => i18n.changeLanguage('en')}
-                            className={cn(
-                                "px-6 py-3 rounded-xl border-2 font-medium transition-all",
-                                i18n.language === 'en'
-                                    ? "border-cafe-primary bg-cafe-primary/5 text-cafe-primary"
-                                    : "border-cafe-secondary text-cafe-text-muted hover:bg-cafe-surface-hover"
-                            )}
-                        >
-                            English
-                        </button>
-
-                        <button
-                            onClick={() => i18n.changeLanguage('sk')}
-                            className={cn(
-                                "px-6 py-3 rounded-xl border-2 font-medium transition-all",
-                                i18n.language === 'sk'
-                                    ? "border-cafe-primary bg-cafe-primary/5 text-cafe-primary"
-                                    : "border-cafe-secondary text-cafe-text-muted hover:bg-cafe-surface-hover"
-                            )}
-                        >
-                            Slovenčina
-                        </button>
+                        {LANG_OPTIONS.map(({ id, label }) => (
+                            <button
+                                key={id}
+                                onClick={() => i18n.changeLanguage(id)}
+                                className={cn(
+                                    "px-6 py-3 rounded-xl border-2 font-medium transition-all",
+                                    getActiveStyles(i18n.language === id)
+                                )}
+                            >
+                                {label}
+                            </button>
+                        ))}
                     </div>
                 </section>
 
@@ -100,5 +80,3 @@ function SettingsPage() {
         </div>
     );
 }
-
-export default SettingsPage;

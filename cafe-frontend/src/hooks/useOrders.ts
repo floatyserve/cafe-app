@@ -20,11 +20,32 @@ export function useOrders() {
         ));
     };
 
+    const createNewOrder = (tableId: number) => {
+        const newOrder: Order = {
+            id: Math.floor(Math.random() * 10000), // Mock ID generator
+            tableNumber: tableId,
+            status: 'OPEN',
+            createdAt: new Date().toISOString(),
+            items: []
+        };
+        setOrders(prev => [...prev, newOrder]);
+        return newOrder;
+    };
+
+    const removeOrderItem = (orderId: number, itemId: number) => {
+        setOrders(prev => prev.map(order =>
+            order.id === orderId
+                ? { ...order, items: order.items.filter(item => item.id !== itemId) }
+                : order
+        ));
+    };
 
     return {
         orders,
         updateItemStatus,
         handlePayOrder,
+        createNewOrder,
+        removeOrderItem,
         setOrders
     };
 }
