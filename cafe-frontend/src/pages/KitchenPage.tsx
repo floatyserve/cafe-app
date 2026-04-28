@@ -29,7 +29,13 @@ export default function KitchenPage() {
                 {t('nav.kitchen')}
             </h1>
 
-            <KanbanGrid items={allKitchenItems} columns={COLUMNS} currentTime={currentTime} onUpdateStatus={updateItemStatus} />
+            <KanbanGrid
+                items={allKitchenItems}
+                columns={COLUMNS}
+                currentTime={currentTime}
+                onUpdateStatus={updateItemStatus}
+                viewContext="kitchen"
+            />
         </div>
     );
 }

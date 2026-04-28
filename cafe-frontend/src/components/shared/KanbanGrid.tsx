@@ -15,9 +15,10 @@ interface KanbanGridProps {
     columns: ColumnConfig[];
     currentTime: number;
     onUpdateStatus: (orderId: number, itemId: number, newStatus: ItemStatus) => void;
+    viewContext: 'kitchen' | 'bar' | 'waiter';
 }
 
-export default function KanbanGrid({ items, columns, currentTime, onUpdateStatus }: KanbanGridProps) {
+export default function KanbanGrid({ items, columns, currentTime, onUpdateStatus, viewContext }: KanbanGridProps) {
     return (
         <div className="flex-1 grid grid-cols-1 md:grid-cols-3 gap-6 overflow-hidden">
             {columns.map(col => {
@@ -40,6 +41,7 @@ export default function KanbanGrid({ items, columns, currentTime, onUpdateStatus
                                     createdAt={item.createdAt}
                                     currentTime={currentTime}
                                     onUpdateStatus={onUpdateStatus}
+                                    viewContext={viewContext}
                                 />
                             ))}
                         </div>

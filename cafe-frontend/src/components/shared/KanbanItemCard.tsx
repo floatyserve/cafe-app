@@ -1,4 +1,4 @@
-import { RotateCcw, Clock } from 'lucide-react';
+import { RotateCcw, Clock, Check } from 'lucide-react';
 import type { OrderItem, ItemStatus, Category } from '../../types';
 import { cn } from '../../lib/utils';
 
@@ -6,10 +6,10 @@ const CARD_STYLES: Record<ItemStatus, string> = {
     PENDING: "bg-cafe-surface border-cafe-secondary/50",
     PREPARING: "bg-status-preparing/10 border-status-preparing/50",
     READY: "bg-status-ready/10 border-status-ready/50",
-    SERVED: "hidden"
+    SERVED: "bg-cafe-surface-hover opacity-60 grayscale border-cafe-secondary/50"
 };
 
-const PRIMARY_BTN_BASE = "flex-1 text-white font-bold py-3 rounded-lg hover:opacity-90 transition-opacity";
+const PRIMARY_BTN_BASE = "flex-1 text-white font-bold py-3 rounded-lg hover:opacity-90 transition-opacity flex justify-center items-center gap-2";
 const UNDO_BTN_BASE = "p-3 border-2 border-cafe-secondary rounded-lg text-cafe-text-muted hover:bg-cafe-surface-hover transition-all flex justify-center items-center";
 
 const CATEGORY_VERBS: Record<Category, { start: string, undo: string }> = {
@@ -24,9 +24,10 @@ interface KanbanItemCardProps {
     createdAt: string;
     currentTime: number;
     onUpdateStatus: (orderId: number, itemId: number, newStatus: ItemStatus) => void;
+    viewContext?: 'kitchen' | 'bar' | 'waiter';
 }
 
-export default function KanbanItemCard({ orderId, item, createdAt, currentTime, onUpdateStatus }: KanbanItemCardProps) {
+export default function KanbanItemCard({ orderId, item, createdAt, currentTime, onUpdateStatus, viewContext = 'waiter' }: KanbanItemCardProps) {
 
     const start = new Date(createdAt).getTime();
     const diffMins = Math.floor((currentTime - start) / 60000);
@@ -45,7 +46,7 @@ export default function KanbanItemCard({ orderId, item, createdAt, currentTime, 
 
                 <div className={cn(
                     "flex items-center gap-1 text-sm font-medium px-2 py-1 rounded-md transition-colors",
-                    isUrgent && item.status !== 'READY'
+                    isUrgent && item.status !== 'READY' && item.status !== 'SERVED'
                         ? "bg-status-urgent-bg text-status-urgent-text"
                         : "bg-cafe-surface-hover text-cafe-text-muted"
                 )}>
@@ -56,7 +57,7 @@ export default function KanbanItemCard({ orderId, item, createdAt, currentTime, 
 
             <div className="flex gap-2 text-cafe-text-main font-medium text-lg mb-1">
                 <span className="text-cafe-accent font-bold">{item.quantity}x</span>
-                <span className={item.status === 'READY' ? "line-through opacity-60" : ""}>
+                <span className={(item.status === 'READY' || item.status === 'SERVED') ? "line-through opacity-60" : ""}>
                     {item.menuItem.name}
                 </span>
             </div>
@@ -90,17 +91,46 @@ export default function KanbanItemCard({ orderId, item, createdAt, currentTime, 
                             onClick={() => onUpdateStatus(orderId, item.id, 'READY')}
                             className={cn(PRIMARY_BTN_BASE, "bg-status-preparing")}
                         >
-                            Done
+                            <Check className="size-icon-sm" /> Done
                         </button>
                     </>
                 )}
 
                 {item.status === 'READY' && (
+                    <>
+                        {viewContext === 'kitchen' ? (
+                            <button
+                                onClick={() => onUpdateStatus(orderId, item.id, 'PREPARING')}
+                                className="flex-1 border-2 border-cafe-secondary text-cafe-text-muted font-bold py-3 rounded-lg hover:bg-cafe-surface-hover flex justify-center items-center gap-2 transition-colors"
+                            >
+                                <RotateCcw className="size-icon-sm" /> {verbs.undo}
+                            </button>
+                        ) : (
+                            <>
+                                <button
+                                    onClick={() => onUpdateStatus(orderId, item.id, 'PREPARING')}
+                                    className={UNDO_BTN_BASE}
+                                    title={verbs.undo}
+                                >
+                                    <RotateCcw className="size-icon-base" />
+                                </button>
+                                <button
+                                    onClick={() => onUpdateStatus(orderId, item.id, 'SERVED')}
+                                    className={cn(PRIMARY_BTN_BASE, "bg-status-ready")}
+                                >
+                                    Serve
+                                </button>
+                            </>
+                        )}
+                    </>
+                )}
+
+                {item.status === 'SERVED' && (
                     <button
-                        onClick={() => onUpdateStatus(orderId, item.id, 'PREPARING')}
-                        className="flex-1 border-2 border-status-ready/50 text-status-ready font-bold py-3 rounded-lg hover:bg-status-ready/10 flex justify-center items-center gap-2 transition-colors"
+                        onClick={() => onUpdateStatus(orderId, item.id, 'READY')}
+                        className="flex-1 border-2 border-cafe-secondary text-cafe-text-muted font-bold py-3 rounded-lg hover:bg-cafe-surface-hover flex justify-center items-center gap-2 transition-colors"
                     >
-                        <RotateCcw className="size-icon-sm" /> {verbs.undo}
+                        <RotateCcw className="size-icon-sm" /> Undo Serving
                     </button>
                 )}
             </div>

@@ -17,6 +17,7 @@ export interface OrderItem {
     quantity: number;
     notes?: string;
     status: ItemStatus;
+    updatedAt?: number;
 }
 
 export interface Order {
