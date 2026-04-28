@@ -7,7 +7,7 @@ import BarPage from './pages/BarPage';
 import SettingsPage from "./pages/SettingsPage.tsx";
 import TableViewPage from "./pages/TableViewPage.tsx";
 
-function App() {
+export default function App() {
     return (
         <ThemeProvider defaultTheme="system" storageKey="cafe-ui-theme">
             <BrowserRouter>
@@ -26,5 +26,3 @@ function App() {
         </ThemeProvider>
     );
 }
-
-export default App;
