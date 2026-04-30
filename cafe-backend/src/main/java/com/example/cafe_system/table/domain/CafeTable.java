@@ -13,6 +13,7 @@ public class CafeTable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(unique = true)
     private int number;
 
     private int capacity;
