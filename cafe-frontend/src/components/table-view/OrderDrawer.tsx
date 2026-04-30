@@ -1,17 +1,23 @@
-import { X, ShoppingBag, Plus, CreditCard, Trash2 } from 'lucide-react';
+import { X, ShoppingBag, Plus, CreditCard, Trash2, ChefHat } from 'lucide-react';
 import { cn, calculateOrderTotal } from '../../lib/utils';
-import type { Order } from '../../types';
+import type { Order, DraftItem } from '../../types';
+
+
 
 interface OrderDrawerProps {
     selectedTableId: number | null;
     selectedTableConfig: { seats: number } | undefined;
     activeOrder: Order | undefined | null;
     isOrderingMode: boolean;
+
+    draftItems: DraftItem[];
+    onSendToKitchen: () => void;
+    onRemoveDraftItem: (tempId: string) => void;
+
     onClose: () => void;
     onOpenNewOrder: () => void;
     onAddItems: () => void;
     onCheckout: () => void;
-    onRemoveItem: (orderId: number, itemId: number) => void;
 }
 
 export default function OrderDrawer({
@@ -19,12 +25,19 @@ export default function OrderDrawer({
                                         selectedTableConfig,
                                         activeOrder,
                                         isOrderingMode,
+                                        draftItems = [], // Default to empty array
+                                        onSendToKitchen,
+                                        onRemoveDraftItem,
                                         onClose,
                                         onOpenNewOrder,
                                         onAddItems,
-                                        onCheckout,
-                                        onRemoveItem
+                                        onCheckout
                                     }: OrderDrawerProps) {
+
+    const draftTotal = draftItems.reduce((sum, item) => sum + (item.menuItem.price * item.quantity), 0);
+    const orderTotal = activeOrder ? calculateOrderTotal(activeOrder) : 0;
+    const grandTotal = orderTotal + draftTotal;
+
     return (
         <div className={cn(
             "w-96 bg-cafe-surface border-l border-cafe-secondary flex flex-col shadow-2xl transition-transform duration-300 absolute right-0 top-0 h-full z-10",
@@ -61,63 +74,97 @@ export default function OrderDrawer({
                             </div>
                         ) : (
                             <div className="space-y-6 h-full flex flex-col">
-                                <div className="flex-1">
-                                    <h3 className="text-sm font-bold text-cafe-text-muted uppercase tracking-wider mb-4">Current Order</h3>
-                                    <ul className="space-y-4">
-                                        {activeOrder.items.map((item) => (
-                                            <li key={item.id} className="flex justify-between items-start">
-                                                <div className="flex gap-2">
-                                                    <span className="font-bold text-cafe-accent">{item.quantity}x</span>
-                                                    <div className="flex flex-col">
-                                                        <span className="text-cafe-text-main font-medium">{item.menuItem.name}</span>
-                                                        <span className="text-xs text-cafe-text-muted">{item.status}</span>
-                                                    </div>
-                                                </div>
+                                <div className="flex-1 overflow-y-auto pr-2">
 
-                                                <div className="flex items-center gap-3">
-                                                    <span className="text-cafe-text-muted font-medium">
-                                                        ${(item.menuItem.price * item.quantity).toFixed(2)}
-                                                    </span>
+                                    {activeOrder.items.length > 0 && (
+                                        <div className="mb-6">
+                                            <h3 className="text-sm font-bold text-cafe-text-muted uppercase tracking-wider mb-4">Sent to Kitchen</h3>
+                                            <ul className="space-y-4">
+                                                {activeOrder.items.map((item) => (
+                                                    <li key={item.id} className="flex justify-between items-start opacity-75">
+                                                        <div className="flex gap-2">
+                                                            <span className="font-bold text-cafe-text-muted">{item.quantity}x</span>
+                                                            <div className="flex flex-col">
+                                                                <span className="text-cafe-text-main font-medium">{item.menuItem.name}</span>
+                                                                <span className="text-xs font-bold text-status-ready">{item.status}</span>
+                                                            </div>
+                                                        </div>
+                                                        <span className="text-cafe-text-muted font-medium">
+                                                            ${(item.menuItem.price * item.quantity).toFixed(2)}
+                                                        </span>
+                                                    </li>
+                                                ))}
+                                            </ul>
+                                        </div>
+                                    )}
 
-                                                    {item.status === 'PENDING' && (
-                                                        <button
-                                                            onClick={() => onRemoveItem(activeOrder.id, item.id)}
-                                                            className="text-cafe-text-muted/60 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 p-1.5 rounded-md transition-colors"
-                                                            title="Remove item"
-                                                        >
-                                                            <Trash2 className="size-icon-sm" />
-                                                        </button>
-                                                    )}
-                                                </div>
-                                            </li>
-                                        ))}
-                                    </ul>
+                                    {draftItems.length > 0 && (
+                                        <div className="bg-orange-50 dark:bg-orange-950/20 p-3 rounded-xl border border-orange-200 dark:border-orange-900/50">
+                                            <h3 className="text-sm font-bold text-orange-600 dark:text-orange-400 uppercase tracking-wider mb-3 flex items-center gap-2">
+                                                <ChefHat className="size-icon-sm" /> Unsent Items
+                                            </h3>
+                                            <ul className="space-y-3">
+                                                {draftItems.map((item) => (
+                                                    <li key={item.tempId} className="flex justify-between items-center">
+                                                        <div className="flex gap-2">
+                                                            <span className="font-bold text-orange-500">{item.quantity}x</span>
+                                                            <span className="text-cafe-text-main font-bold">{item.menuItem.name}</span>
+                                                        </div>
+                                                        <div className="flex items-center gap-3">
+                                                            <span className="text-cafe-text-main font-bold">
+                                                                ${(item.menuItem.price * item.quantity).toFixed(2)}
+                                                            </span>
+                                                            <button
+                                                                onClick={() => onRemoveDraftItem(item.tempId)}
+                                                                className="text-red-400 hover:text-red-600 p-1 rounded-md transition-colors"
+                                                            >
+                                                                <Trash2 className="size-icon-sm" />
+                                                            </button>
+                                                        </div>
+                                                    </li>
+                                                ))}
+                                            </ul>
+                                        </div>
+                                    )}
                                 </div>
 
-                                <div className="mt-auto">
+                                <div className="mt-auto pt-4 bg-cafe-surface">
                                     <div className="border-t border-cafe-secondary/50 pt-4 flex justify-between items-center text-xl mb-4">
                                         <span className="font-bold text-cafe-text-main">Total</span>
-                                        <span className="font-bold text-cafe-primary">${calculateOrderTotal(activeOrder).toFixed(2)}</span>
+                                        <span className="font-bold text-cafe-primary">${grandTotal.toFixed(2)}</span>
                                     </div>
 
                                     <div className="grid grid-cols-2 gap-3">
-                                        {!isOrderingMode && (
+                                        {isOrderingMode ? (
                                             <button
-                                                onClick={onAddItems}
-                                                className="bg-cafe-surface-hover hover:bg-cafe-secondary/30 text-cafe-text-main border-2 border-cafe-secondary font-bold py-3 rounded-xl transition-colors flex justify-center items-center gap-2"
+                                                onClick={onSendToKitchen}
+                                                disabled={draftItems.length === 0}
+                                                className={cn(
+                                                    "col-span-2 text-white font-bold py-4 rounded-xl transition-all flex justify-center items-center gap-2 shadow-sm text-lg",
+                                                    draftItems.length > 0
+                                                        ? "bg-status-preparing hover:bg-status-preparing/90 hover:scale-[1.02]"
+                                                        : "bg-cafe-secondary cursor-not-allowed opacity-50"
+                                                )}
                                             >
-                                                <Plus className="size-icon-sm" /> Add Items
+                                                <ChefHat className="size-icon-base" />
+                                                {draftItems.length > 0 ? "Send to Kitchen" : "Select items..."}
                                             </button>
+                                        ) : (
+                                            <>
+                                                <button
+                                                    onClick={onAddItems}
+                                                    className="bg-cafe-surface-hover hover:bg-cafe-secondary/30 text-cafe-text-main border-2 border-cafe-secondary font-bold py-3 rounded-xl transition-colors flex justify-center items-center gap-2"
+                                                >
+                                                    <Plus className="size-icon-sm" /> Add Items
+                                                </button>
+                                                <button
+                                                    onClick={onCheckout}
+                                                    className="bg-cafe-primary hover:bg-cafe-primary/90 text-white font-bold py-3 rounded-xl transition-colors flex justify-center items-center gap-2 shadow-sm"
+                                                >
+                                                    <CreditCard className="size-icon-sm" /> Checkout
+                                                </button>
+                                            </>
                                         )}
-                                        <button
-                                            onClick={onCheckout}
-                                            className={cn(
-                                                "bg-cafe-primary hover:bg-cafe-primary/90 text-white font-bold py-3 rounded-xl transition-colors flex justify-center items-center gap-2 shadow-sm",
-                                                isOrderingMode ? "col-span-2" : ""
-                                            )}
-                                        >
-                                            <CreditCard className="size-icon-sm" /> Checkout
-                                        </button>
                                     </div>
                                 </div>
                             </div>

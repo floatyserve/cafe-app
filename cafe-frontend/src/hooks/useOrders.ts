@@ -39,20 +39,11 @@ export function useOrders() {
         return newOrder;
     };
 
-    const removeOrderItem = (orderId: number, itemId: number) => {
-        setOrders(prev => prev.map(order =>
-            order.id === orderId
-                ? {...order, items: order.items.filter(item => item.id !== itemId)}
-                : order
-        ));
-    };
-
     return {
         orders,
         updateItemStatus,
         handlePayOrder,
         createNewOrder,
-        removeOrderItem,
         setOrders
     };
 }

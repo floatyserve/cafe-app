@@ -27,3 +27,9 @@ export interface Order {
     status: OrderStatus;
     createdAt: string;
 }
+
+export interface DraftItem {
+    tempId: string; // Temporary ID for frontend management
+    menuItem: MenuItem;
+    quantity: number;
+}
