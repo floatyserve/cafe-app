@@ -2,6 +2,7 @@ package com.example.cafe_system.menu_item.service.impl;
 
 import com.example.cafe_system.exceptions.ReferenceNotFoundException;
 import com.example.cafe_system.menu_item.domain.MenuItem;
+import com.example.cafe_system.menu_item.domain.MenuItemCategory;
 import com.example.cafe_system.menu_item.repository.MenuItemRepository;
 import com.example.cafe_system.menu_item.service.MenuItemService;
 import lombok.RequiredArgsConstructor;
@@ -28,5 +29,10 @@ public class MenuItemServiceJpa implements MenuItemService {
     @Override
     public List<MenuItem> getAllActiveMenuItems() {
         return menuItemRepository.findAllByActiveTrue();
+    }
+
+    @Override
+    public List<MenuItem> getAllActiveMenuItemsByCategory(MenuItemCategory category) {
+        return menuItemRepository.findAllByCategoryAndActiveTrue(category);
     }
 }
