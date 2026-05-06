@@ -17,30 +17,34 @@ import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 public class CafeTableServiceJpaTest {
+
     @Mock private CafeTableRepository cafeTableRepository;
 
     @InjectMocks
-    CafeTableServiceJpa cafeTableServiceJpa;
+    private CafeTableServiceJpa cafeTableServiceJpa;
+
+    private final Long TABLE_ID = 1L;
 
     @Nested
-    class GetByNumber {
+    class GetById {
+
         @Test
-        void shouldReturnCafeTableByNumber() {
+        void shouldReturnCafeTableById() {
             CafeTable cafeTable = mock(CafeTable.class);
 
-            when(cafeTableRepository.findByNumber(1)).thenReturn(Optional.of(cafeTable));
+            when(cafeTableRepository.findById(TABLE_ID)).thenReturn(Optional.of(cafeTable));
 
-            CafeTable result = cafeTableServiceJpa.getByNumber(1);
+            CafeTable result = cafeTableServiceJpa.getById(TABLE_ID);
 
             assertEquals(cafeTable, result);
         }
 
         @Test
         void shouldThrowReferenceNotFoundException_WhenTableNotFound() {
-            when(cafeTableRepository.findByNumber(1)).thenReturn(Optional.empty());
+            when(cafeTableRepository.findById(TABLE_ID)).thenReturn(Optional.empty());
 
-            assertThrows( ReferenceNotFoundException.class,
-                    () -> cafeTableServiceJpa.getByNumber(1));
+            assertThrows(ReferenceNotFoundException.class,
+                    () -> cafeTableServiceJpa.getById(TABLE_ID));
         }
     }
 }

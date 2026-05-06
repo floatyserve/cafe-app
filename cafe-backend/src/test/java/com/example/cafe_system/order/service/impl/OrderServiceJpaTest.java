@@ -3,6 +3,7 @@ package com.example.cafe_system.order.service.impl;
 import com.example.cafe_system.exceptions.BadRequestException;
 import com.example.cafe_system.exceptions.ReferenceNotFoundException;
 import com.example.cafe_system.menu_item.domain.MenuItem;
+import com.example.cafe_system.menu_item.domain.MenuItemCategory;
 import com.example.cafe_system.menu_item.service.MenuItemService;
 import com.example.cafe_system.order.domain.Order;
 import com.example.cafe_system.order.domain.OrderState;
@@ -39,6 +40,8 @@ public class OrderServiceJpaTest {
     private OrderServiceJpa orderService;
 
     private final Instant FIXED_TIME = Instant.parse("2026-05-04T12:00:00Z");
+    private final Long TABLE_ID = 100L;
+    private final Long ORDER_ID = 500L;
 
     @Nested
     class CreateOrder {
@@ -46,17 +49,16 @@ public class OrderServiceJpaTest {
         @Test
         void shouldCreateAndSaveOrder_WhenTableIsAvailable() {
             CafeTable table = mock(CafeTable.class);
-
             when(table.isOutOfOrder()).thenReturn(false);
 
-            when(cafeTableService.getByNumber(4)).thenReturn(table);
+            when(cafeTableService.getById(TABLE_ID)).thenReturn(table);
             when(orderRepository.existsByCafeTableAndState(table, OrderState.OPEN)).thenReturn(false);
             when(clock.instant()).thenReturn(FIXED_TIME);
 
             Order savedOrder = mock(Order.class);
             when(orderRepository.save(any(Order.class))).thenReturn(savedOrder);
 
-            Order result = orderService.createOrder(4);
+            Order result = orderService.createOrder(TABLE_ID);
 
             assertNotNull(result);
             ArgumentCaptor<Order> orderCaptor = ArgumentCaptor.forClass(Order.class);
@@ -69,25 +71,23 @@ public class OrderServiceJpaTest {
         @Test
         void shouldThrowBadRequest_WhenTableIsOutOfOrder() {
             CafeTable table = mock(CafeTable.class);
-            when(table.getNumber()).thenReturn(4);
             when(table.isOutOfOrder()).thenReturn(true);
 
-            when(cafeTableService.getByNumber(4)).thenReturn(table);
+            when(cafeTableService.getById(TABLE_ID)).thenReturn(table);
 
-            assertThrows(BadRequestException.class, () -> orderService.createOrder(4));
+            assertThrows(BadRequestException.class, () -> orderService.createOrder(TABLE_ID));
             verify(orderRepository, never()).save(any());
         }
 
         @Test
         void shouldThrowBadRequest_WhenTableAlreadyHasOpenOrder() {
             CafeTable table = mock(CafeTable.class);
-            when(table.getNumber()).thenReturn(4);
             when(table.isOutOfOrder()).thenReturn(false);
 
-            when(cafeTableService.getByNumber(4)).thenReturn(table);
+            when(cafeTableService.getById(TABLE_ID)).thenReturn(table);
             when(orderRepository.existsByCafeTableAndState(table, OrderState.OPEN)).thenReturn(true);
 
-            assertThrows(BadRequestException.class, () -> orderService.createOrder(4));
+            assertThrows(BadRequestException.class, () -> orderService.createOrder(TABLE_ID));
             verify(orderRepository, never()).save(any());
         }
     }
@@ -97,31 +97,38 @@ public class OrderServiceJpaTest {
 
         @Test
         void shouldAddItemsAndSave_WhenOrderIsOpen() {
-            Order order = mock(Order.class);
-            when(order.getState()).thenReturn(OrderState.OPEN);
+            CafeTable table = new CafeTable(1, 4);
+            Order order = new Order(table, FIXED_TIME);
 
-            MenuItem menuItem = mock(MenuItem.class);
+            MenuItem realMenuItem = new MenuItem("Latte", 450, MenuItemCategory.DRINK);
+
             AddOrderItemCommand command = new AddOrderItemCommand(1L, 2, "Extra hot");
 
-            when(orderRepository.findById(100L)).thenReturn(Optional.of(order));
-            when(menuItemService.getActiveMenuItemById(1L)).thenReturn(menuItem);
+            when(orderRepository.findById(ORDER_ID)).thenReturn(Optional.of(order));
+            when(menuItemService.getActiveMenuItemById(1L)).thenReturn(realMenuItem);
             when(clock.instant()).thenReturn(FIXED_TIME);
             when(orderRepository.save(order)).thenReturn(order);
 
-            Order result = orderService.addItemsToOrder(100L, List.of(command));
+            Order result = orderService.addItemsToOrder(ORDER_ID, List.of(command));
 
             assertNotNull(result);
-            verify(order).addOrderItem(menuItem, 2, "Extra hot", FIXED_TIME);
+
+            assertEquals(1, result.getOrderItems().size(), "One item should be added to the order");
+
+            var addedItem = result.getOrderItems().getFirst();
+            assertEquals(realMenuItem, addedItem.getMenuItem());
+            assertEquals(2, addedItem.getQuantity());
+            assertEquals("Extra hot", addedItem.getNote());
+
             verify(orderRepository).save(order);
         }
 
         @Test
         void shouldThrowReferenceNotFound_WhenOrderDoesNotExist() {
-            when(orderRepository.findById(100L)).thenReturn(Optional.empty());
+            when(orderRepository.findById(ORDER_ID)).thenReturn(Optional.empty());
 
             assertThrows(ReferenceNotFoundException.class,
-                    () -> orderService.addItemsToOrder(100L, List.of()));
-
+                    () -> orderService.addItemsToOrder(ORDER_ID, List.of()));
             verify(orderRepository, never()).save(any());
         }
 
@@ -130,12 +137,33 @@ public class OrderServiceJpaTest {
             Order order = mock(Order.class);
             when(order.getState()).thenReturn(OrderState.PAID);
 
-            when(orderRepository.findById(100L)).thenReturn(Optional.of(order));
+            when(orderRepository.findById(ORDER_ID)).thenReturn(Optional.of(order));
 
             assertThrows(BadRequestException.class,
-                    () -> orderService.addItemsToOrder(100L, List.of()));
-
+                    () -> orderService.addItemsToOrder(ORDER_ID, List.of()));
             verify(orderRepository, never()).save(any());
+        }
+    }
+
+    @Nested
+    class PayOrder {
+
+        @Test
+        void shouldMarkOrderAsPaid_WhenOrderIsOpen() {
+            CafeTable table = new CafeTable(1, 4);
+            Order order = new Order(table, FIXED_TIME);
+
+            when(orderRepository.findById(ORDER_ID)).thenReturn(Optional.of(order));
+            when(clock.instant()).thenReturn(FIXED_TIME);
+            when(orderRepository.save(order)).thenReturn(order);
+
+            Order result = orderService.payOrder(ORDER_ID);
+
+            assertNotNull(result);
+            assertEquals(OrderState.PAID, result.getState(), "The order state should be updated to PAID");
+            assertEquals(FIXED_TIME, result.getPaidAt(), "The paidAt timestamp should be set");
+
+            verify(orderRepository).save(order);
         }
     }
 }
