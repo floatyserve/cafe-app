@@ -11,6 +11,6 @@ import org.mapstruct.ReportingPolicy;
         unmappedTargetPolicy = ReportingPolicy.ERROR
 )
 public interface OrderMapper {
-    @Mapping(target = "cafeTableNumber", source = "cafeTable.number")
+    @Mapping(target = "tableId", source = "cafeTable.id")
     OrderDto toDto(Order order);
 }
