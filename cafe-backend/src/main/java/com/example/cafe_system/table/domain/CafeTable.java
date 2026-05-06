@@ -30,4 +30,12 @@ public class CafeTable {
     public boolean isOutOfOrder(){
         return status == CafeTableStatus.OUT_OF_ORDER;
     }
+
+    public void markAsOutOfOrder() {
+        this.status = CafeTableStatus.OUT_OF_ORDER;
+    }
+
+    public void markAsActive() {
+        this.status = CafeTableStatus.ACTIVE;
+    }
 }
