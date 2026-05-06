@@ -16,18 +16,11 @@ import java.util.List;
 public class CafeTableServiceJpa implements CafeTableService {
     private final CafeTableRepository cafeTableRepository;
 
+    @Override
     public CafeTable getById(Long id) {
         return cafeTableRepository.findById(id)
                 .orElseThrow(() ->
                         new ReferenceNotFoundException("Cafe table with id " + id + " not found")
-                );
-    }
-
-    @Override
-    public CafeTable getByNumber(int number) {
-        return cafeTableRepository.findByNumber(number)
-                .orElseThrow(() ->
-                        new ReferenceNotFoundException("Cafe table with number " + number + " not found")
                 );
     }
 

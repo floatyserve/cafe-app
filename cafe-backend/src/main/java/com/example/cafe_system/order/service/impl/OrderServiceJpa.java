@@ -28,8 +28,8 @@ public class OrderServiceJpa implements OrderService {
     private final Clock clock;
 
     @Override
-    public Order createOrder(int cafeTableNumber) {
-        CafeTable cafeTable = cafeTableService.getByNumber(cafeTableNumber);
+    public Order createOrder(Long cafeTableId) {
+        CafeTable cafeTable = cafeTableService.getById(cafeTableId);
 
         assertOrderCanBeOpened(cafeTable);
 

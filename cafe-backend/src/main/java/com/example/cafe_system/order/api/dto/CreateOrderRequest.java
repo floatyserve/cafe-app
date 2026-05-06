@@ -1,9 +1,8 @@
 package com.example.cafe_system.order.api.dto;
 
-import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotNull;
 
 public record CreateOrderRequest(
-        @Min(1)
-        int cafeTableNumber
+        @NotNull Long cafeTableId
 ) {
 }

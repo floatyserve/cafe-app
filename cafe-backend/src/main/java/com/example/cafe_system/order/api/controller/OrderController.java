@@ -11,7 +11,6 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -33,7 +32,7 @@ public class OrderController {
                 .status(HttpStatus.CREATED)
                 .body(
                         mapper.toDto(
-                                orderService.createOrder(request.cafeTableNumber())
+                                orderService.createOrder(request.cafeTableId())
                         )
                 );
     }
