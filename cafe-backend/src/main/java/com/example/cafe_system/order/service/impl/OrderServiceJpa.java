@@ -56,6 +56,18 @@ public class OrderServiceJpa implements OrderService {
         return orderRepository.save(currentOrder);
     }
 
+    @Override
+    public Order payOrder(Long orderId) {
+        Order order = orderRepository.findById(orderId)
+                .orElseThrow(() -> new ReferenceNotFoundException("Order with id " + orderId + " not found"));
+
+        assertOrderCanBePaid(order);
+
+        order.markAsPaid(clock.instant());
+
+        return orderRepository.save(order);
+    }
+
     private void assertOrderCanBeOpened(CafeTable cafeTable) {
         if (cafeTable.isOutOfOrder()) {
             throw new BadRequestException("Cafe table with number " + cafeTable.getNumber() + " is out of order");
@@ -63,6 +75,12 @@ public class OrderServiceJpa implements OrderService {
 
         if (orderRepository.existsByCafeTableAndState(cafeTable, OrderState.OPEN)) {
             throw new BadRequestException("There is already an open order for cafe table with number " + cafeTable.getNumber());
+        }
+    }
+
+    private void assertOrderCanBePaid(Order order) {
+        if (order.getState() != OrderState.OPEN) {
+            throw new BadRequestException("Cannot pay order with id " + order.getId() + " because it is not open");
         }
     }
 }

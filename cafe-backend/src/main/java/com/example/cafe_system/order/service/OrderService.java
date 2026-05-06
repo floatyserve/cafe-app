@@ -9,4 +9,6 @@ public interface OrderService {
     Order createOrder(int cafeTableNumber);
 
     Order addItemsToOrder(Long orderId, List<AddOrderItemCommand> requests);
+
+    Order payOrder(Long orderId);
 }
