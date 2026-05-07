@@ -1,24 +1,36 @@
 import { useState } from 'react';
 import { useOrders } from '../hooks/useOrders';
-import { MOCK_MENU } from '../data/mockData';
-import type { OrderItem, Category, DraftItem } from '../types';
+import { MOCK_MENU, CAFE_TABLES } from '../data/mockData';
+import type { OrderItem, Category, DraftItem, Table } from '../types'; // Ensure Table is imported
 
-import FloorPlan, { CAFE_TABLES } from '../components/table-view/FloorPlan';
+import FloorPlan from '../components/table-view/FloorPlan';
 import MenuGrid from '../components/table-view/MenuGrid';
 import OrderDrawer from '../components/table-view/OrderDrawer';
 
 export default function TableViewPage() {
     const { orders, handlePayOrder, createNewOrder, setOrders } = useOrders();
 
+    const [tables, setTables] = useState<Table[]>(CAFE_TABLES);
+
     const [selectedTableId, setSelectedTableId] = useState<number | null>(null);
     const [isOrderingMode, setIsOrderingMode] = useState(false);
     const [activeCategory, setActiveCategory] = useState<Category>('DRINK');
-
     const [draftItems, setDraftItems] = useState<DraftItem[]>([]);
 
     const getActiveOrder = (tableId: number) => orders.find(order => order.tableNumber === tableId && order.status === 'OPEN');
+
+    const selectedTable = tables.find(t => t.id === selectedTableId);
     const activeOrder = selectedTableId ? getActiveOrder(selectedTableId) : null;
-    const selectedTableConfig = CAFE_TABLES.find(t => t.id === selectedTableId);
+
+    const handleToggleTableStatus = () => {
+        if (!selectedTableId) return;
+
+        setTables(prevTables => prevTables.map(table =>
+            table.id === selectedTableId
+                ? { ...table, outOfOrder: !table.outOfOrder }
+                : table
+        ));
+    };
 
     const handleOpenTable = () => {
         if (selectedTableId && !activeOrder) {
@@ -100,6 +112,7 @@ export default function TableViewPage() {
             <div className="flex-1 p-8 overflow-y-auto transition-all duration-300">
                 {!isOrderingMode ? (
                     <FloorPlan
+                        tables={tables}
                         selectedTableId={selectedTableId}
                         onSelectTable={setSelectedTableId}
                         getActiveOrder={getActiveOrder}
@@ -116,7 +129,8 @@ export default function TableViewPage() {
 
             <OrderDrawer
                 selectedTableId={selectedTableId}
-                selectedTableConfig={selectedTableConfig}
+                selectedTableConfig={selectedTable}
+                isTableOutOfOrder={selectedTable?.outOfOrder || false}
                 activeOrder={activeOrder}
                 isOrderingMode={isOrderingMode}
                 draftItems={draftItems}
@@ -126,6 +140,7 @@ export default function TableViewPage() {
                 onOpenNewOrder={handleOpenTable}
                 onAddItems={() => setIsOrderingMode(true)}
                 onCheckout={handleCheckout}
+                onChangeTableStatus={handleToggleTableStatus}
             />
 
         </div>

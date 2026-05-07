@@ -33,3 +33,10 @@ export interface DraftItem {
     menuItem: MenuItem;
     quantity: number;
 }
+
+export interface Table {
+    id: number;
+    number: number;
+    capacity: number;
+    outOfOrder: boolean;
+}

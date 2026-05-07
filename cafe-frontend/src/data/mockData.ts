@@ -1,4 +1,4 @@
-import type {MenuItem, Order} from '../types';
+import type {MenuItem, Order, Table} from '../types';
 
 export const MOCK_MENU: MenuItem[] = [
     { id: 1, name: 'Espresso', category: 'DRINK', price: 2.50 },
@@ -9,6 +9,17 @@ export const MOCK_MENU: MenuItem[] = [
     { id: 6, name: 'Caesar Salad', category: 'MEAL', price: 9.00 },
     { id: 7, name: 'Cheesecake', category: 'DESSERT', price: 6.00 },
     { id: 8, name: 'Chocolate Croissant', category: 'DESSERT', price: 3.50 }
+];
+
+export const CAFE_TABLES: Table[] = [
+    { id: 1, number: 1, capacity: 2, outOfOrder: false },
+    { id: 2, number: 2, capacity: 4, outOfOrder: false },
+    { id: 4, number: 3, capacity: 4, outOfOrder: false },
+    { id: 5, number: 4, capacity: 2, outOfOrder: false },
+    { id: 7, number: 5, capacity: 2, outOfOrder: false },
+    { id: 9, number: 6, capacity: 4, outOfOrder: false },
+    { id: 12, number: 7, capacity: 6, outOfOrder: false },
+    { id: 14, number: 8, capacity: 4, outOfOrder: false },
 ];
 
 export const MOCK_ORDERS: Order[] = [
@@ -93,15 +104,15 @@ export const MOCK_ORDERS: Order[] = [
             { id: 19, menuItem: MOCK_MENU[2], quantity: 2, status: 'SERVED' }
         ]
     },
-    {
-        // Table 1: Quick solo lunch, everything is ready at the pass.
-        id: 108,
-        tableNumber: 1,
-        status: 'OPEN',
-        createdAt: new Date(Date.now() - 8 * 60000).toISOString(), // 8 mins ago
-        items: [
-            { id: 20, menuItem: MOCK_MENU[4], quantity: 1, notes: 'No mayo', status: 'READY' },
-            { id: 21, menuItem: MOCK_MENU[7], quantity: 1, status: 'READY' }
-        ]
-    }
+    // {
+    //     // Table 1: Quick solo lunch, everything is ready at the pass.
+    //     id: 108,
+    //     tableNumber: 1,
+    //     status: 'OPEN',
+    //     createdAt: new Date(Date.now() - 8 * 60000).toISOString(), // 8 mins ago
+    //     items: [
+    //         { id: 20, menuItem: MOCK_MENU[4], quantity: 1, notes: 'No mayo', status: 'READY' },
+    //         { id: 21, menuItem: MOCK_MENU[7], quantity: 1, status: 'READY' }
+    //     ]
+    // }
 ];
