@@ -37,4 +37,5 @@ jobs:
           cache: 'maven'
 
       - name: Compile and Run Tests
+        working-directory: ./cafe-backend
         run: mvn -B clean verify
