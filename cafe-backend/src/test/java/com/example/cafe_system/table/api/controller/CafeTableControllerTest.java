@@ -1,6 +1,7 @@
 package com.example.cafe_system.table.api.controller;
 
 import com.example.cafe_system.exceptions.ReferenceNotFoundException;
+import com.example.cafe_system.security.service.JwtService;
 import com.example.cafe_system.table.api.dto.CafeTableDto;
 import com.example.cafe_system.table.domain.CafeTable;
 import com.example.cafe_system.table.mapper.CafeTableMapper;
@@ -9,6 +10,7 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -23,6 +25,9 @@ public class CafeTableControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
+
+    @MockitoBean private JwtService jwtService;
+    @MockitoBean private UserDetailsService userService;
 
     @MockitoBean private CafeTableService cafeTableService;
     @MockitoBean private CafeTableMapper cafeTableMapper;

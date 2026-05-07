@@ -5,10 +5,12 @@ import com.example.cafe_system.menu_item.domain.MenuItem;
 import com.example.cafe_system.menu_item.domain.MenuItemCategory;
 import com.example.cafe_system.menu_item.mapper.MenuItemMapper;
 import com.example.cafe_system.menu_item.service.MenuItemService;
+import com.example.cafe_system.security.service.JwtService;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -23,6 +25,9 @@ public class MenuItemControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
+
+    @MockitoBean private JwtService jwtService;
+    @MockitoBean private UserDetailsService userService;
 
     @MockitoBean private MenuItemService menuItemService;
     @MockitoBean private MenuItemMapper menuItemMapper;

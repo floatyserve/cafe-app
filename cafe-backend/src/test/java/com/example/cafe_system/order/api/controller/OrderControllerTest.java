@@ -11,7 +11,9 @@ import com.example.cafe_system.order.mapper.OrderMapper;
 import com.example.cafe_system.order.notification.OrderNotificationService;
 import com.example.cafe_system.order.service.OrderService;
 
+import com.example.cafe_system.security.service.JwtService;
 import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 
 import org.junit.jupiter.api.Nested;
@@ -38,6 +40,9 @@ public class OrderControllerTest {
 
     @Autowired
     private JsonMapper jsonMapper;
+
+    @MockitoBean private JwtService jwtService;
+    @MockitoBean private UserDetailsService userService;
 
     @MockitoBean private OrderService orderService;
     @MockitoBean private OrderMapper orderMapper;
