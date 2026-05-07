@@ -3,6 +3,8 @@ package com.example.cafe_system.exceptions;
 import com.example.cafe_system.exceptions.api.ApiError;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.method.annotation.HandlerMethodValidationException;
@@ -55,6 +57,30 @@ public class GlobalExceptionHandler {
                         new ApiError(
                                 "BAD_REQUEST",
                                 "Invalid parameter format or type: " + e.getName()
+                        )
+                );
+    }
+
+    @ExceptionHandler(BadCredentialsException.class)
+    public ResponseEntity<ApiError> handleBadCredentialsException(BadCredentialsException e) {
+        return ResponseEntity
+                .status(HttpStatus.UNAUTHORIZED)
+                .body(
+                        new ApiError(
+                                "UNAUTHORIZED",
+                                e.getMessage()
+                        )
+                );
+    }
+
+    @ExceptionHandler(HttpMessageNotReadableException.class)
+    public ResponseEntity<ApiError> handleHttpMessageNotReadableException(HttpMessageNotReadableException e) {
+        return ResponseEntity
+                .status(HttpStatus.BAD_REQUEST)
+                .body(
+                        new ApiError(
+                                "BAD_REQUEST",
+                                "Malformed JSON request or missing request body"
                         )
                 );
     }
