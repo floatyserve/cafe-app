@@ -19,8 +19,7 @@ import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
@@ -52,7 +51,7 @@ public class AuthServiceJpaTest {
 
             String token = authService.login(TEST_USER, TEST_PASSWORD);
 
-            assertThat(token).isEqualTo(MOCK_TOKEN);
+            assertEquals(MOCK_TOKEN, token);
             verify(authenticationManager).authenticate(
                     new UsernamePasswordAuthenticationToken(TEST_USER, TEST_PASSWORD)
             );
@@ -78,8 +77,7 @@ public class AuthServiceJpaTest {
             when(authenticationManager.authenticate(any(UsernamePasswordAuthenticationToken.class)))
                     .thenThrow(new BadCredentialsException("Bad credentials"));
 
-            assertThatThrownBy(() -> authService.login(TEST_USER, WRONG_PASSWORD))
-                    .isInstanceOf(BadCredentialsException.class);
+            assertThrows(BadCredentialsException.class, () -> authService.login(TEST_USER, WRONG_PASSWORD));
 
             verifyNoInteractions(userService, jwtService);
         }
@@ -90,8 +88,7 @@ public class AuthServiceJpaTest {
             when(userService.getByUsername(TEST_USER))
                     .thenThrow(new ReferenceNotFoundException("User not found"));
 
-            assertThatThrownBy(() -> authService.login(TEST_USER, TEST_PASSWORD))
-                    .isInstanceOf(ReferenceNotFoundException.class);
+            assertThrows(ReferenceNotFoundException.class, () -> authService.login(TEST_USER, TEST_PASSWORD));
 
             verifyNoInteractions(jwtService);
         }
@@ -109,7 +106,7 @@ public class AuthServiceJpaTest {
 
             String token = authService.register(TEST_USER, TEST_PASSWORD, Role.WORKER);
 
-            assertThat(token).isEqualTo(MOCK_TOKEN);
+            assertEquals(MOCK_TOKEN, token);
             verify(passwordEncoder).encode(TEST_PASSWORD);
             verify(userService).createUser(TEST_USER, ENCODED_PASSWORD, Role.WORKER);
         }
@@ -125,9 +122,8 @@ public class AuthServiceJpaTest {
 
             ArgumentCaptor<String> passwordCaptor = ArgumentCaptor.forClass(String.class);
             verify(userService).createUser(eq(TEST_USER), passwordCaptor.capture(), eq(Role.WORKER));
-            assertThat(passwordCaptor.getValue())
-                    .isNotEqualTo(TEST_PASSWORD)
-                    .isEqualTo(ENCODED_PASSWORD);
+            assertNotEquals(TEST_PASSWORD, passwordCaptor.getValue());
+            assertEquals(ENCODED_PASSWORD, passwordCaptor.getValue());
         }
 
         @Test
@@ -136,9 +132,8 @@ public class AuthServiceJpaTest {
             when(userService.createUser(TEST_USER, ENCODED_PASSWORD, Role.WORKER))
                     .thenThrow(new BadRequestException("User already exists"));
 
-            assertThatThrownBy(() -> authService.register(TEST_USER, TEST_PASSWORD, Role.WORKER))
-                    .isInstanceOf(BadRequestException.class)
-                    .hasMessageContaining("already exists");
+            BadRequestException ex = assertThrows(BadRequestException.class, () -> authService.register(TEST_USER, TEST_PASSWORD, Role.WORKER));
+            assertTrue(ex.getMessage().contains("already exists"));
 
             verifyNoInteractions(jwtService);
         }
@@ -153,7 +148,7 @@ public class AuthServiceJpaTest {
 
                 String token = authService.register(TEST_USER, TEST_PASSWORD, role);
 
-                assertThat(token).isEqualTo(MOCK_TOKEN);
+                assertEquals(MOCK_TOKEN, token);
             }
         }
     }

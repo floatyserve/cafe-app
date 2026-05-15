@@ -14,8 +14,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Optional;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
@@ -41,7 +40,7 @@ public class UserServiceJpaTest {
 
             User result = userService.getByUsername(TEST_USER);
 
-            assertThat(result.getUsername()).isEqualTo(TEST_USER);
+            assertEquals(TEST_USER, result.getUsername());
             verify(userRepository).findByUsername(TEST_USER);
         }
 
@@ -49,8 +48,7 @@ public class UserServiceJpaTest {
         void shouldThrowReferenceNotFoundException_WhenUserDoesNotExist() {
             when(userRepository.findByUsername(TEST_USER)).thenReturn(Optional.empty());
 
-            assertThatThrownBy(() -> userService.getByUsername(TEST_USER))
-                    .isInstanceOf(ReferenceNotFoundException.class);
+            assertThrows(ReferenceNotFoundException.class, () -> userService.getByUsername(TEST_USER));
         }
     }
 
@@ -66,8 +64,8 @@ public class UserServiceJpaTest {
 
             User result = userService.createUser(TEST_USER, TEST_PASS, Role.WORKER);
 
-            assertThat(result.getUsername()).isEqualTo(TEST_USER);
-            assertThat(result.getRole()).isEqualTo(Role.WORKER);
+            assertEquals(TEST_USER, result.getUsername());
+            assertEquals(Role.WORKER, result.getRole());
             verify(userRepository).save(any(User.class));
         }
 
@@ -76,9 +74,8 @@ public class UserServiceJpaTest {
             User existingUser = User.builder().username(TEST_USER).build();
             when(userRepository.findByUsername(TEST_USER)).thenReturn(Optional.of(existingUser));
 
-            assertThatThrownBy(() -> userService.createUser(TEST_USER, TEST_PASS, Role.WORKER))
-                    .isInstanceOf(BadRequestException.class)
-                    .hasMessageContaining("already exists");
+            BadRequestException ex = assertThrows(BadRequestException.class, () -> userService.createUser(TEST_USER, TEST_PASS, Role.WORKER));
+            assertTrue(ex.getMessage().contains("already exists"));
 
             verify(userRepository, never()).save(any(User.class));
         }
