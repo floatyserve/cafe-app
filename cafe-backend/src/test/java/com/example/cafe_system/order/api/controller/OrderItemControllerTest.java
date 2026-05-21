@@ -1,5 +1,6 @@
 package com.example.cafe_system.order.api.controller;
 
+import com.example.cafe_system.menu_item.domain.MenuItemCategory;
 import com.example.cafe_system.order.api.dto.AddOrderItemRequest;
 import com.example.cafe_system.order.api.dto.OrderDto;
 import com.example.cafe_system.order.api.dto.OrderItemDto;
@@ -64,7 +65,15 @@ public class OrderItemControllerTest {
         void shouldReturnList() throws Exception {
             OrderItem mockItem = mock(OrderItem.class);
             OrderItemDto expectedDto = new OrderItemDto(
-                    ITEM_ID, ORDER_ID, 1L, "Latte", 350, 1, null, OrderItemStatus.PENDING
+                    ITEM_ID,
+                    ORDER_ID,
+                    1L,
+                    "Latte",
+                    MenuItemCategory.DRINK,
+                    350,
+                    1,
+                    null,
+                    OrderItemStatus.PENDING
             );
 
             when(orderItemService.findByOrderId(ORDER_ID)).thenReturn(List.of(mockItem));
@@ -111,7 +120,15 @@ public class OrderItemControllerTest {
             OrderItem mockItem = mock(OrderItem.class);
             Order mockOrder = mock(Order.class);
             OrderItemDto expectedItemDto = new OrderItemDto(
-                    ITEM_ID, ORDER_ID, 1L, "Latte", 350, 1, null, OrderItemStatus.SERVED
+                    ITEM_ID,
+                    ORDER_ID,
+                    1L,
+                    "Latte",
+                    MenuItemCategory.DRINK,
+                    350,
+                    1,
+                    null,
+                    OrderItemStatus.SERVED
             );
             OrderDto expectedOrderDto = new OrderDto(ORDER_ID, 5L, OrderState.OPEN, Instant.now(), null);
 
