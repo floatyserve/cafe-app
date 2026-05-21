@@ -21,5 +21,14 @@ export const orderService = {
     payOrder: async (orderId: number): Promise<Order> => {
         const response = await api.put<Order>(`/orders/${orderId}/pay`);
         return response.data;
+    },
+
+    getActiveOrders: async (): Promise<Order[]> => {
+        const response = await api.get<Order[]>('/orders');
+        return response.data;
+    },
+
+    updateItemStatus: async (itemId: number, status: string): Promise<void> => {
+        await api.patch(`/order-items/${itemId}/status`, { status });
     }
 };

@@ -1,16 +1,16 @@
 import { ChevronLeft, Coffee } from 'lucide-react';
 import { cn } from '../../lib/utils';
-import { MOCK_MENU } from '../../data/mockData';
-import type { Category } from '../../types';
+import type { Category, MenuItem } from '../../types';
 
 interface MenuGridProps {
+    menuItems: MenuItem[];
     activeCategory: Category;
     onSelectCategory: (category: Category) => void;
-    onAddItem: (item: typeof MOCK_MENU[0]) => void;
+    onAddItem: (item: MenuItem) => void;
     onBack: () => void;
 }
 
-export default function MenuGrid({ activeCategory, onSelectCategory, onAddItem, onBack }: MenuGridProps) {
+export default function MenuGrid({ menuItems, activeCategory, onSelectCategory, onAddItem, onBack }: MenuGridProps) {
     return (
         <div className="animate-in slide-in-from-left-8 fade-in duration-300 h-full flex flex-col">
             <div className="flex items-center gap-4 mb-8">
@@ -44,7 +44,7 @@ export default function MenuGrid({ activeCategory, onSelectCategory, onAddItem, 
             </div>
 
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 overflow-y-auto pb-8">
-                {MOCK_MENU.filter(item => item.category === activeCategory).map(item => (
+                {menuItems.filter(item => item.category === activeCategory).map(item => (
                     <button
                         key={item.id}
                         onClick={() => onAddItem(item)}

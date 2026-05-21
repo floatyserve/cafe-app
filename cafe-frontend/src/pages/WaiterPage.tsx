@@ -19,7 +19,7 @@ export default function WaiterPage() {
     const servedItemsExpirationTimeInMinutes = 30;
 
     const waiterItems = orders.flatMap(order =>
-        order.items
+        (order.items || [])
             .filter(item => {
                 if (item.status === 'READY') return true;
 

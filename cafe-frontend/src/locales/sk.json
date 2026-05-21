@@ -10,6 +10,7 @@
     "title": "Nastavenia",
     "appearance": "Vzhľad",
     "language": "Jazyk",
+    "account": "Účet",
     "theme": {
       "light": "Svetlý",
       "dark": "Tmavý",
@@ -23,6 +24,7 @@
     "signIn": "Prihlásiť sa",
     "error": "Nesprávne meno alebo heslo",
     "welcome": "Vitajte späť!",
-    "subtitle": "Zadajte svoje údaje pre prístup do systému"
+    "subtitle": "Zadajte svoje údaje pre prístup do systému",
+    "logout": "Odhlásiť sa"
   }
 }

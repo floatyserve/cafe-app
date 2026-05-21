@@ -1,7 +1,9 @@
 import { useTranslation } from 'react-i18next';
 import { useTheme } from '../components/ThemeProvider';
-import { Moon, Sun, Monitor, Globe } from 'lucide-react';
+import { Moon, Sun, Monitor, Globe, LogOut, User } from 'lucide-react';
 import { cn } from '../lib/utils';
+import { useNavigate } from 'react-router-dom';
+import { authService } from '../api';
 
 const THEME_OPTIONS = [
     { id: 'light', icon: Sun, label: 'settings.theme.light' },
@@ -22,6 +24,12 @@ const getActiveStyles = (isActive: boolean) =>
 export default function SettingsPage() {
     const { t, i18n } = useTranslation();
     const { theme, setTheme } = useTheme();
+    const navigate = useNavigate();
+
+    const handleLogout = () => {
+        authService.logout();
+        navigate('/login');
+    };
 
     return (
         <div className="p-8 max-w-3xl mx-auto">
@@ -74,6 +82,21 @@ export default function SettingsPage() {
                             </button>
                         ))}
                     </div>
+                </section>
+
+                <section className="bg-cafe-surface border border-cafe-secondary rounded-2xl p-6 shadow-sm">
+                    <h2 className="text-xl font-semibold mb-4 flex items-center gap-2">
+                        <User className="text-cafe-accent size-icon-base" />
+                        {t('settings.account')}
+                    </h2>
+
+                    <button
+                        onClick={handleLogout}
+                        className="flex items-center gap-3 px-6 py-3 rounded-xl border-2 border-status-urgent-text/20 text-status-urgent-text hover:bg-status-urgent-bg transition-all font-medium"
+                    >
+                        <LogOut className="size-icon-base" />
+                        {t('auth.logout')}
+                    </button>
                 </section>
 
             </div>

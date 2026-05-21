@@ -10,6 +10,7 @@
     "title": "Settings",
     "appearance": "Appearance",
     "language": "Language",
+    "account": "Account",
     "theme": {
       "light": "Light",
       "dark": "Dark",
@@ -23,6 +24,7 @@
     "signIn": "Sign In",
     "error": "Invalid username or password",
     "welcome": "Welcome!",
-    "subtitle": "Please enter your credentials to access the system"
+    "subtitle": "Please enter your credentials to access the system",
+    "logout": "Log Out"
   }
 }

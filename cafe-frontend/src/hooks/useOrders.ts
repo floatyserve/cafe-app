@@ -1,49 +1,93 @@
-import {useState} from 'react';
-import type {Order, ItemStatus} from '../types';
-import {MOCK_ORDERS} from '../data/mockData';
+import { useState, useEffect, useCallback } from 'react';
+import type { Order, ItemStatus } from '../types';
+import { orderService, type AddOrderItemRequest } from '../api';
+import { createStompClient } from '../lib/websocket';
 
 export function useOrders() {
-    // this useState will be replaced by a WebSocket listener or React Query
-    const [orders, setOrders] = useState<Order[]>(MOCK_ORDERS);
+    const [orders, setOrders] = useState<Order[]>([]);
 
-    const updateItemStatus = (orderId: number, itemId: number, newStatus: ItemStatus) => {
-        setOrders(prev => prev.map(order =>
-            order.id === orderId
-                ? {
-                    ...order,
-                    items: order.items.map(
-                        i => i.id === itemId
-                            ? {...i, status: newStatus, updatedAt: Date.now()}
-                            : i
-                    )
-                }
-                : order
-        ));
-    };
+    const handleWsMessage = useCallback((_topic: string, updatedOrder: Order) => {
+        setOrders(prev => {
+            const index = prev.findIndex(o => o.id === updatedOrder.id);
+            if (index !== -1) {
+                const newOrders = [...prev];
+                newOrders[index] = updatedOrder;
+                return newOrders;
+            } else {
+                return [...prev, updatedOrder];
+            }
+        });
+    }, []);
 
-    const handlePayOrder = (orderId: number) => {
-        setOrders(prev => prev.map(order =>
-            order.id === orderId ? {...order, status: 'PAID'} : order
-        ));
-    };
-
-    const createNewOrder = (tableId: number) => {
-        const newOrder: Order = {
-            id: Math.floor(Math.random() * 10000), // Mock ID generator
-            tableNumber: tableId,
-            status: 'OPEN',
-            createdAt: new Date().toISOString(),
-            items: []
+    useEffect(() => {
+        const fetchOrders = async () => {
+            try {
+                const data = await orderService.getActiveOrders();
+                setOrders(data);
+            } catch (error) {
+                console.error('Failed to fetch initial orders:', error);
+            }
         };
-        setOrders(prev => [...prev, newOrder]);
-        return newOrder;
+
+        fetchOrders();
+
+        const stompClient = createStompClient(handleWsMessage);
+        stompClient.activate();
+
+        return () => {
+            stompClient.deactivate();
+        };
+    }, [handleWsMessage]);
+
+    const handlePayOrder = async (orderId: number) => {
+        try {
+            const updatedOrder = await orderService.payOrder(orderId);
+            setOrders(prev => prev.map(order =>
+                order.id === orderId ? updatedOrder : order
+            ));
+        } catch (error) {
+            console.error('Failed to pay order:', error);
+        }
+    };
+
+    const createNewOrder = async (tableId: number) => {
+        try {
+            const newOrder = await orderService.createOrder(tableId);
+            setOrders(prev => [...prev, newOrder]);
+            return newOrder;
+        } catch (error) {
+            console.error('Failed to create order:', error);
+            throw error;
+        }
+    };
+
+    const addItemsToOrder = async (orderId: number, items: AddOrderItemRequest[]) => {
+        try {
+            const updatedOrder = await orderService.addItemsToOrder(orderId, items);
+            setOrders(prev => prev.map(order =>
+                order.id === orderId ? updatedOrder : order
+            ));
+            return updatedOrder;
+        } catch (error) {
+            console.error('Failed to add items to order:', error);
+            throw error;
+        }
+    };
+
+    const updateItemStatus = async (_orderId: number, itemId: number, status: ItemStatus) => {
+        try {
+            await orderService.updateItemStatus(itemId, status);
+        } catch (error) {
+            console.error('Failed to update item status:', error);
+        }
     };
 
     return {
         orders,
-        updateItemStatus,
         handlePayOrder,
         createNewOrder,
+        addItemsToOrder,
+        updateItemStatus,
         setOrders
     };
 }

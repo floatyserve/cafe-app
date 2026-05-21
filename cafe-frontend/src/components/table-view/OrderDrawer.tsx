@@ -112,12 +112,12 @@ export default function OrderDrawer({
                             <div className="space-y-6 h-full flex flex-col">
                                 <div className="flex-1 overflow-y-auto pr-2">
 
-                                    {activeOrder.items.length > 0 && (
+                                    {(activeOrder.items || []).length > 0 && (
                                         <div className="mb-6">
                                             <h3 className="text-sm font-bold text-cafe-text-muted uppercase tracking-wider mb-4">Sent
                                                 to Kitchen</h3>
                                             <ul className="space-y-4">
-                                                {activeOrder.items.map((item) => (
+                                                {(activeOrder.items || []).map((item) => (
                                                     <li key={item.id}
                                                         className="flex justify-between items-start opacity-75">
                                                         <div className="flex gap-2">

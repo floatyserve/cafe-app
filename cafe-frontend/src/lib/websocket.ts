@@ -1,14 +1,42 @@
-import {Client} from '@stomp/stompjs';
+import { Client } from '@stomp/stompjs';
 import SockJS from 'sockjs-client';
+import {jwtDecode} from "jwt-decode";
 
-const WS_URL = import.meta.env.VITE_WS_URL || 'http://localhost:8080/ws';
+const WS_URL = import.meta.env.VITE_WS_URL || 'http://localhost:8080/ws-cafe';
 
 export const KITCHEN_TOPIC = '/topic/kitchen';
 export const BAR_TOPIC = '/topic/bar';
 
-export const createStompClient = (onMessage: (topic: string, message: any) => void) => {
+const isTokenValid = (token: string | null) => {
+    if (!token) return false;
+    try {
+        const decoded = jwtDecode(token);
+        return !(decoded.exp && decoded.exp * 1000 < Date.now());
+    } catch {
+        return false;
+    }
+};
+
+export const createStompClient = (onMessage: (topic: string, message: unknown) => void) => {
     const client = new Client({
-        webSocketFactory: () => new SockJS(WS_URL),
+        webSocketFactory: () => {
+            const currentToken = localStorage.getItem('token');
+            if (!isTokenValid(currentToken)) {
+                console.warn("Token is expired or missing. WebSocket connection will likely fail.");
+            }
+
+            const socketUrl = `${WS_URL}?token=${currentToken}`;
+            return new SockJS(socketUrl);
+        },
+
+        beforeConnect: () => {
+            const currentToken = localStorage.getItem('token');
+            if (currentToken) {
+                client.connectHeaders = {
+                    Authorization: `Bearer ${currentToken}`,
+                };
+            }
+        },
         debug: (str) => {
             console.log(str);
         },

@@ -1,54 +1,87 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useOrders } from '../hooks/useOrders';
-import { MOCK_MENU, CAFE_TABLES } from '../data/mockData';
-import type { OrderItem, Category, DraftItem, Table } from '../types'; // Ensure Table is imported
+import { tableService, menuService } from '../api';
+import type { Category, DraftItem, Table, MenuItem } from '../types';
 
 import FloorPlan from '../components/table-view/FloorPlan';
 import MenuGrid from '../components/table-view/MenuGrid';
 import OrderDrawer from '../components/table-view/OrderDrawer';
 
 export default function TableViewPage() {
-    const { orders, handlePayOrder, createNewOrder, setOrders } = useOrders();
+    const { orders, handlePayOrder, createNewOrder, addItemsToOrder } = useOrders();
 
-    const [tables, setTables] = useState<Table[]>(CAFE_TABLES);
+    const [tables, setTables] = useState<Table[]>([]);
+    const [menuItems, setMenuItems] = useState<MenuItem[]>([]);
+    const [isLoading, setIsLoading] = useState(true);
 
     const [selectedTableId, setSelectedTableId] = useState<number | null>(null);
     const [isOrderingMode, setIsOrderingMode] = useState(false);
     const [activeCategory, setActiveCategory] = useState<Category>('DRINK');
     const [draftItems, setDraftItems] = useState<DraftItem[]>([]);
 
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                const [tablesData, menuData] = await Promise.all([
+                    tableService.getAllTables(),
+                    menuService.getMenu()
+                ]);
+                setTables(tablesData);
+                setMenuItems(menuData);
+            } catch (error) {
+                console.error('Failed to fetch initial data:', error);
+            } finally {
+                setIsLoading(false);
+            }
+        };
+
+        fetchData();
+    }, []);
+
     const getActiveOrder = (tableId: number) => orders.find(order => order.tableNumber === tableId && order.status === 'OPEN');
 
     const selectedTable = tables.find(t => t.id === selectedTableId);
     const activeOrder = selectedTableId ? getActiveOrder(selectedTableId) : null;
 
-    const handleToggleTableStatus = () => {
-        if (!selectedTableId) return;
+    const handleToggleTableStatus = async () => {
+        if (!selectedTableId || !selectedTable) return;
 
-        setTables(prevTables => prevTables.map(table =>
-            table.id === selectedTableId
-                ? { ...table, outOfOrder: !table.outOfOrder }
-                : table
-        ));
+        try {
+            const updatedTable = selectedTable.outOfOrder 
+                ? await tableService.markAsActive(selectedTableId)
+                : await tableService.markAsOutOfOrder(selectedTableId);
+            
+            setTables(prev => prev.map(t => t.id === selectedTableId ? updatedTable : t));
+        } catch (error) {
+            console.error('Failed to update table status:', error);
+        }
     };
 
-    const handleOpenTable = () => {
+    const handleOpenTable = async () => {
         if (selectedTableId && !activeOrder) {
-            createNewOrder(selectedTableId);
+            try {
+                await createNewOrder(selectedTableId);
+            } catch (error) {
+                console.error('Failed to open table:', error);
+            }
         }
         setIsOrderingMode(true);
     };
 
-    const handleCheckout = () => {
+    const handleCheckout = async () => {
         if (activeOrder) {
-            handlePayOrder(activeOrder.id);
-            setSelectedTableId(null);
-            setIsOrderingMode(false);
-            setDraftItems([]);
+            try {
+                await handlePayOrder(activeOrder.id);
+                setSelectedTableId(null);
+                setIsOrderingMode(false);
+                setDraftItems([]);
+            } catch (error) {
+                console.error('Checkout failed:', error);
+            }
         }
     };
 
-    const handleAddItemToCart = (menuItem: typeof MOCK_MENU[0]) => {
+    const handleAddItemToCart = (menuItem: MenuItem) => {
         if (!activeOrder) return;
 
         setDraftItems(prev => {
@@ -79,25 +112,22 @@ export default function TableViewPage() {
         );
     };
 
-    const handleSendToKitchen = () => {
+    const handleSendToKitchen = async () => {
         if (!activeOrder || draftItems.length === 0) return;
 
-        const newOrderItems: OrderItem[] = draftItems.map(draft => ({
-            id: Math.floor(Math.random() * 100000),
-            menuItem: draft.menuItem,
+        const itemsToSend = draftItems.map(draft => ({
+            menuItemId: draft.menuItem.id,
             quantity: draft.quantity,
-            status: 'PENDING',
-            updatedAt: Date.now()
+            note: ''
         }));
 
-        setOrders(prev => prev.map(order =>
-            order.id === activeOrder.id
-                ? { ...order, items: [...order.items, ...newOrderItems] }
-                : order
-        ));
-
-        setDraftItems([]);
-        setIsOrderingMode(false);
+        try {
+            await addItemsToOrder(activeOrder.id, itemsToSend);
+            setDraftItems([]);
+            setIsOrderingMode(false);
+        } catch (error) {
+            console.error('Failed to send items to kitchen:', error);
+        }
     };
 
     const handleCloseDrawer = () => {
@@ -106,9 +136,16 @@ export default function TableViewPage() {
         setDraftItems([]);
     };
 
+    if (isLoading) {
+        return (
+            <div className="flex h-full items-center justify-center bg-cafe-bg">
+                <div className="size-12 border-4 border-cafe-primary/30 border-t-cafe-primary rounded-full animate-spin" />
+            </div>
+        );
+    }
+
     return (
         <div className="flex h-full overflow-hidden bg-cafe-bg relative">
-
             <div className="flex-1 p-8 overflow-y-auto transition-all duration-300">
                 {!isOrderingMode ? (
                     <FloorPlan
@@ -119,6 +156,7 @@ export default function TableViewPage() {
                     />
                 ) : (
                     <MenuGrid
+                        menuItems={menuItems}
                         activeCategory={activeCategory}
                         onSelectCategory={setActiveCategory}
                         onAddItem={handleAddItemToCart}
@@ -142,7 +180,6 @@ export default function TableViewPage() {
                 onCheckout={handleCheckout}
                 onChangeTableStatus={handleToggleTableStatus}
             />
-
         </div>
     );
 }
