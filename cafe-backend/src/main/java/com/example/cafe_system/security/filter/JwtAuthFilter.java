@@ -1,6 +1,7 @@
 package com.example.cafe_system.security.filter;
 
 import com.example.cafe_system.security.service.JwtService;
+import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -46,18 +47,30 @@ public class JwtAuthFilter extends OncePerRequestFilter {
         if (authHeader != null && authHeader.startsWith(bearerTokenBeginning)) {
             return authHeader.substring(bearerTokenBeginning.length());
         }
+
+        String tokenParam = request.getParameter("token");
+        if (tokenParam != null && !tokenParam.isBlank()) {
+            return tokenParam;
+        }
+
         return null;
     }
 
     private void authenticateUserIfNecessary(String jwt, HttpServletRequest request) {
-        String username = jwtService.extractUsername(jwt);
+        try {
+            String username = jwtService.extractUsername(jwt);
 
-        if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-            UserDetails userDetails = this.userDetailsService.loadUserByUsername(username);
+            if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
+                UserDetails userDetails = this.userDetailsService.loadUserByUsername(username);
 
-            if (jwtService.isTokenValid(jwt, userDetails)) {
-                setSecurityContext(userDetails, request);
+                if (jwtService.isTokenValid(jwt, userDetails)) {
+                    setSecurityContext(userDetails, request);
+                }
             }
+        } catch (ExpiredJwtException e) {
+            logger.warn("JWT token has expired: " + e.getMessage());
+        } catch (Exception e) {
+            logger.warn("Invalid JWT token: " + e.getMessage());
         }
     }
 

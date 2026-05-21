@@ -1,12 +1,9 @@
 package com.example.cafe_system.order.api.controller;
 
-import com.example.cafe_system.order.api.dto.AddOrderItemRequest;
 import com.example.cafe_system.order.api.dto.CreateOrderRequest;
 import com.example.cafe_system.order.api.dto.OrderDto;
 import com.example.cafe_system.order.mapper.OrderMapper;
-import com.example.cafe_system.order.notification.OrderNotificationService;
 import com.example.cafe_system.order.service.OrderService;
-import com.example.cafe_system.order.service.model.AddOrderItemCommand;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -22,7 +19,14 @@ public class OrderController {
 
     private final OrderService orderService;
     private final OrderMapper mapper;
-    private final OrderNotificationService orderNotificationService;
+
+    @GetMapping
+    public List<OrderDto> getAllOpenOrders() {
+        return orderService.getAllOpenOrders()
+                .stream()
+                .map(mapper::toDto)
+                .toList();
+    }
 
     @PostMapping
     public ResponseEntity<OrderDto> createOrder(
@@ -35,22 +39,6 @@ public class OrderController {
                                 orderService.createOrder(request.cafeTableId())
                         )
                 );
-    }
-
-    @PostMapping("/{id}/items")
-    public OrderDto addItemsToOrder(
-            @PathVariable Long id,
-            @RequestBody @Valid List<AddOrderItemRequest> requests
-    ) {
-        var commands = requests.stream()
-                .map(req -> new AddOrderItemCommand(req.menuItemId(), req.quantity(), req.note()))
-                .toList();
-
-        OrderDto updatedOrder = mapper.toDto(orderService.addItemsToOrder(id, commands));
-
-        orderNotificationService.notifyOrderUpdated(updatedOrder);
-
-        return updatedOrder;
     }
 
     @PutMapping("/{id}/pay")

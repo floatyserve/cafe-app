@@ -28,6 +28,11 @@ public class OrderServiceJpa implements OrderService {
     private final Clock clock;
 
     @Override
+    public List<Order> getAllOpenOrders() {
+        return orderRepository.findByState(OrderState.OPEN);
+    }
+
+    @Override
     public Order createOrder(Long cafeTableId) {
         CafeTable cafeTable = cafeTableService.getById(cafeTableId);
 
