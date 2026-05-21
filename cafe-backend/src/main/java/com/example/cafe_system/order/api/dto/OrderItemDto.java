@@ -1,5 +1,6 @@
 package com.example.cafe_system.order.api.dto;
 
+import com.example.cafe_system.menu_item.domain.MenuItemCategory;
 import com.example.cafe_system.order.domain.OrderItemStatus;
 
 public record OrderItemDto(
@@ -7,6 +8,7 @@ public record OrderItemDto(
         Long orderId,
         Long menuItemId,
         String menuItemName,
+        MenuItemCategory menuItemCategory,
         int priceAtTimeOfOrderInCents,
         int quantity,
         String note,
