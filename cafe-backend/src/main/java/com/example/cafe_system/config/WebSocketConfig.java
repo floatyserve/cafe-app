@@ -6,21 +6,19 @@ import org.springframework.web.socket.config.annotation.EnableWebSocketMessageBr
 import org.springframework.web.socket.config.annotation.StompEndpointRegistry;
 import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerConfigurer;
 
-import java.util.List;
-
 @Configuration
 @EnableWebSocketMessageBroker
 public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 
-    private static final List<String> allowedOrigins = List.of(
-            "localhost:5173",
-            "localhost:5174"
-    );
+    private static final String[] allowedOrigins = new String[]{
+            "http://localhost:5173",
+            "http://localhost:5174"
+    };
 
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
         registry.addEndpoint("/ws-cafe")
-                .setAllowedOriginPatterns(String.join(",", allowedOrigins))
+                .setAllowedOriginPatterns(allowedOrigins)
                 .withSockJS();
     }
 

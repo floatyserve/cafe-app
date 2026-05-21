@@ -54,6 +54,7 @@ public class SecurityConfig {
                 )
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/auth/login").permitAll()
+                        .requestMatchers("/ws-cafe/**").authenticated()
                         .requestMatchers("/api/**").authenticated()
                 )
                 .authenticationProvider(authenticationProvider())
