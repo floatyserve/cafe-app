@@ -3,6 +3,7 @@
     "waiter": "Čašník",
     "kitchen": "Kuchyňa",
     "bar": "Bar",
+    "table-view": "Prehľad stolov",
     "settings": "Nastavenia"
   },
   "settings": {
@@ -14,5 +15,14 @@
       "dark": "Tmavý",
       "system": "Systémový"
     }
+  },
+  "auth": {
+    "login": "Prihlásiť sa",
+    "username": "Používateľské meno",
+    "password": "Heslo",
+    "signIn": "Prihlásiť sa",
+    "error": "Nesprávne meno alebo heslo",
+    "welcome": "Vitajte späť!",
+    "subtitle": "Zadajte svoje údaje pre prístup do systému"
   }
 }

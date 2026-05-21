@@ -6,14 +6,17 @@ import KitchenPage from './pages/KitchenPage';
 import BarPage from './pages/BarPage';
 import SettingsPage from "./pages/SettingsPage.tsx";
 import TableViewPage from "./pages/TableViewPage.tsx";
+import LoginPage from "./pages/LoginPage.tsx";
 
 export default function App() {
     return (
         <ThemeProvider defaultTheme="system" storageKey="cafe-ui-theme">
             <BrowserRouter>
                 <Routes>
+                    <Route path="/login" element={<LoginPage/>}/>
+                    
                     <Route element={<AppLayout/>}>
-                        <Route path="/" element={<Navigate to="/waiter" replace/>}/>
+                        <Route path="/" element={<Navigate to="/login" replace/>}/>
 
                         <Route path="/waiter" element={<WaiterPage/>}/>
                         <Route path="/kitchen" element={<KitchenPage/>}/>
