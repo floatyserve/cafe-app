@@ -1,4 +1,4 @@
-import api from "./axios.ts";
+import api from './axios';
 
 export interface LoginRequest {
   username: string;
