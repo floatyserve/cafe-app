@@ -1,5 +1,5 @@
 import api from './axios';
-import type {Order} from '../types';
+import type {Order, OrderItem} from '../types';
 
 export interface AddOrderItemRequest {
     menuItemId: number;
@@ -30,5 +30,10 @@ export const orderService = {
 
     updateItemStatus: async (itemId: number, status: string): Promise<void> => {
         await api.patch(`/order-items/${itemId}/status`, { status });
+    },
+
+    getOrderItems: async (orderId: number): Promise<OrderItem[]> => {
+        const response = await api.get<OrderItem[]>(`/orders/${orderId}/items`);
+        return response.data;
     }
 };

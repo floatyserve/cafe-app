@@ -1,5 +1,5 @@
 import {X, ShoppingBag, Plus, CreditCard, Trash2, ChefHat, CircleX, Wrench} from 'lucide-react';
-import {cn, calculateOrderTotal} from '../../lib/utils';
+import {cn, calculateOrderTotal, aggregateOrderItems} from '../../lib/utils';
 import type {Order, DraftItem, Table} from '../../types';
 
 
@@ -117,8 +117,8 @@ export default function OrderDrawer({
                                             <h3 className="text-sm font-bold text-cafe-text-muted uppercase tracking-wider mb-4">Sent
                                                 to Kitchen</h3>
                                             <ul className="space-y-4">
-                                                {(activeOrder.items || []).map((item) => (
-                                                    <li key={item.id}
+                                                {aggregateOrderItems(activeOrder.items).map((item) => (
+                                                    <li key={`${item.menuItemId}-${item.status}`}
                                                         className="flex justify-between items-start opacity-75">
                                                         <div className="flex gap-2">
                                                             <span

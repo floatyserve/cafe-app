@@ -8,7 +8,7 @@ import MenuGrid from '../components/table-view/MenuGrid';
 import OrderDrawer from '../components/table-view/OrderDrawer';
 
 export default function TableViewPage() {
-    const { orders, handlePayOrder, createNewOrder, addItemsToOrder } = useOrders();
+    const { orders, handlePayOrder, createNewOrder, addItemsToOrder, fetchOrderItems } = useOrders();
 
     const [tables, setTables] = useState<Table[]>([]);
     const [menuCache, setMenuCache] = useState<Partial<Record<Category, MenuItem[]>>>({});
@@ -63,6 +63,12 @@ export default function TableViewPage() {
 
     const selectedTable = tables.find(t => t.id === selectedTableId);
     const activeOrder = selectedTableId ? getActiveOrder(selectedTableId) : null;
+
+    useEffect(() => {
+        if (activeOrder && (!activeOrder.items || activeOrder.items.length === 0)) {
+            fetchOrderItems(activeOrder.id);
+        }
+    }, [activeOrder?.id, fetchOrderItems]);
 
     const handleToggleTableStatus = async () => {
         if (!selectedTableId || !selectedTable) return;
@@ -147,6 +153,7 @@ export default function TableViewPage() {
 
         try {
             await addItemsToOrder(activeOrder.id, itemsToSend);
+            await fetchOrderItems(activeOrder.id);
             setDraftItems([]);
             setIsOrderingMode(false);
         } catch (error) {

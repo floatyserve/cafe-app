@@ -83,12 +83,24 @@ export function useOrders() {
         }
     };
 
+    const fetchOrderItems = async (orderId: number) => {
+        try {
+            const items = await orderService.getOrderItems(orderId);
+            setOrders(prev => prev.map(order =>
+                order.id === orderId ? { ...order, items } : order
+            ));
+        } catch (error) {
+            console.error('Failed to fetch order items:', error);
+        }
+    };
+
     return {
         orders,
         handlePayOrder,
         createNewOrder,
         addItemsToOrder,
         updateItemStatus,
+        fetchOrderItems,
         setOrders
     };
 }
