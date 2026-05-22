@@ -18,8 +18,8 @@ export default function KitchenPage() {
 
     const allKitchenItems = orders.flatMap(order =>
         (order.items || [])
-            .filter(item => item.menuItem.category === 'MEAL' && item.status !== 'SERVED')
-            .map(item => ({ ...item, orderId: order.id, createdAt: order.createdAt }))
+            .filter(item => item.menuItemCategory === 'MEAL' && item.status !== 'SERVED')
+            .map(item => ({ ...item, orderId: order.id, createdAt: order.orderedAt }))
     );
 
     return (

@@ -11,8 +11,9 @@ export default function TableViewPage() {
     const { orders, handlePayOrder, createNewOrder, addItemsToOrder } = useOrders();
 
     const [tables, setTables] = useState<Table[]>([]);
-    const [menuItems, setMenuItems] = useState<MenuItem[]>([]);
+    const [menuCache, setMenuCache] = useState<Partial<Record<Category, MenuItem[]>>>({});
     const [isLoading, setIsLoading] = useState(true);
+    const [isMenuLoading, setIsMenuLoading] = useState(false);
 
     const [selectedTableId, setSelectedTableId] = useState<number | null>(null);
     const [isOrderingMode, setIsOrderingMode] = useState(false);
@@ -20,14 +21,10 @@ export default function TableViewPage() {
     const [draftItems, setDraftItems] = useState<DraftItem[]>([]);
 
     useEffect(() => {
-        const fetchData = async () => {
+        const fetchTables = async () => {
             try {
-                const [tablesData, menuData] = await Promise.all([
-                    tableService.getAllTables(),
-                    menuService.getMenu()
-                ]);
+                const tablesData = await tableService.getAllTables();
                 setTables(tablesData);
-                setMenuItems(menuData);
             } catch (error) {
                 console.error('Failed to fetch initial data:', error);
             } finally {
@@ -35,10 +32,34 @@ export default function TableViewPage() {
             }
         };
 
-        fetchData();
+        fetchTables();
     }, []);
 
-    const getActiveOrder = (tableId: number) => orders.find(order => order.tableNumber === tableId && order.status === 'OPEN');
+    useEffect(() => {
+        if (!isOrderingMode) return;
+
+        const fetchMenuCategory = async () => {
+            if (menuCache[activeCategory]) return;
+
+            setIsMenuLoading(true);
+            try {
+                const data = await menuService.getMenu(activeCategory);
+                setMenuCache(prev => ({ ...prev, [activeCategory]: data }));
+            } catch (error) {
+                console.error(`Failed to fetch menu for ${activeCategory}:`, error);
+            } finally {
+                setIsMenuLoading(false);
+            }
+        };
+
+        fetchMenuCategory();
+    }, [activeCategory, isOrderingMode, menuCache]);
+
+    const getActiveOrder = (tableId: number) => {
+        return orders.find(order => {
+            return Number(order.tableId) === Number(tableId) && order.state === 'OPEN';
+        });
+    };
 
     const selectedTable = tables.find(t => t.id === selectedTableId);
     const activeOrder = selectedTableId ? getActiveOrder(selectedTableId) : null;
@@ -59,13 +80,16 @@ export default function TableViewPage() {
 
     const handleOpenTable = async () => {
         if (selectedTableId && !activeOrder) {
+            setIsOrderingMode(true);
             try {
                 await createNewOrder(selectedTableId);
             } catch (error) {
                 console.error('Failed to open table:', error);
+                setIsOrderingMode(false);
             }
+        } else {
+            setIsOrderingMode(true);
         }
-        setIsOrderingMode(true);
     };
 
     const handleCheckout = async () => {
@@ -82,7 +106,7 @@ export default function TableViewPage() {
     };
 
     const handleAddItemToCart = (menuItem: MenuItem) => {
-        if (!activeOrder) return;
+        if (!selectedTableId || !isOrderingMode) return;
 
         setDraftItems(prev => {
             const existingItem = prev.find(item => item.menuItem.id === menuItem.id);
@@ -156,8 +180,9 @@ export default function TableViewPage() {
                     />
                 ) : (
                     <MenuGrid
-                        menuItems={menuItems}
+                        menuItems={menuCache[activeCategory] || []}
                         activeCategory={activeCategory}
+                        isLoading={isMenuLoading}
                         onSelectCategory={setActiveCategory}
                         onAddItem={handleAddItemToCart}
                         onBack={() => setIsOrderingMode(false)}

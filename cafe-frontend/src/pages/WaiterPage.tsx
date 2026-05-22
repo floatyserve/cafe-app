@@ -24,7 +24,7 @@ export default function WaiterPage() {
                 if (item.status === 'READY') return true;
 
                 if (item.status === 'SERVED') {
-                    const timeToCompare = item.updatedAt || new Date(order.createdAt).getTime();
+                    const timeToCompare = item.updatedAt ? new Date(item.updatedAt).getTime() : new Date(order.orderedAt).getTime();
                     const diffMins = (currentTime - timeToCompare) / 60000;
 
                     return diffMins <= servedItemsExpirationTimeInMinutes;
@@ -35,7 +35,7 @@ export default function WaiterPage() {
             .map(item => ({
                 ...item,
                 orderId: order.id,
-                createdAt: order.createdAt
+                createdAt: order.orderedAt
             }))
     );
 

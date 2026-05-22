@@ -7,5 +7,5 @@ export function cn(...inputs: ClassValue[]) {
 }
 
 export function calculateOrderTotal(order: Order): number {
-    return order.items.reduce((sum, item) => sum + (item.menuItem.price * item.quantity), 0);
+    return (order.items || []).reduce((sum, item) => sum + (item.priceAtTimeOfOrderInCents * item.quantity), 0) / 100;
 }

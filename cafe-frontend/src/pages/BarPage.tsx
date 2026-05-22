@@ -18,8 +18,8 @@ export default function BarPage() {
 
     const allBarItems = orders.flatMap(order =>
         (order.items || [])
-            .filter(item => (item.menuItem.category === 'DRINK' || item.menuItem.category === 'DESSERT') && item.status !== 'SERVED')
-            .map(item => ({ ...item, orderId: order.id, createdAt: order.createdAt }))
+            .filter(item => (item.menuItemCategory === 'DRINK' || item.menuItemCategory === 'DESSERT') && item.status !== 'SERVED')
+            .map(item => ({ ...item, orderId: order.id, createdAt: order.orderedAt }))
     );
 
     return (

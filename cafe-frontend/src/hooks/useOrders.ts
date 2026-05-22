@@ -6,15 +6,16 @@ import { createStompClient } from '../lib/websocket';
 export function useOrders() {
     const [orders, setOrders] = useState<Order[]>([]);
 
-    const handleWsMessage = useCallback((_topic: string, updatedOrder: Order) => {
+    const handleWsMessage = useCallback((_topic: string, updatedOrder: unknown) => {
         setOrders(prev => {
-            const index = prev.findIndex(o => o.id === updatedOrder.id);
+            const order = updatedOrder as Order;
+            const index = prev.findIndex(o => o.id === order.id);
             if (index !== -1) {
                 const newOrders = [...prev];
-                newOrders[index] = updatedOrder;
+                newOrders[index] = order;
                 return newOrders;
             } else {
-                return [...prev, updatedOrder];
+                return [...prev, order];
             }
         });
     }, []);

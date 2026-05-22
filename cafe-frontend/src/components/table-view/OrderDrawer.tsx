@@ -37,7 +37,7 @@ export default function OrderDrawer({
                                         onCheckout
                                     }: OrderDrawerProps) {
 
-    const draftTotal = draftItems.reduce((sum, item) => sum + (item.menuItem.price * item.quantity), 0);
+    const draftTotal = draftItems.reduce((sum, item) => sum + ((item.menuItem.priceInEuros || 0) * item.quantity), 0);
     const orderTotal = activeOrder ? calculateOrderTotal(activeOrder) : 0;
     const grandTotal = orderTotal + draftTotal;
 
@@ -64,7 +64,7 @@ export default function OrderDrawer({
                     </div>
 
                     <div className="flex-1 overflow-y-auto p-6">
-                        {!activeOrder ? (
+                        {(!activeOrder && !isOrderingMode) ? (
                             <div className="h-full flex flex-col items-center justify-center text-center space-y-4">
 
                                 {isTableOutOfOrder ? (
@@ -112,7 +112,7 @@ export default function OrderDrawer({
                             <div className="space-y-6 h-full flex flex-col">
                                 <div className="flex-1 overflow-y-auto pr-2">
 
-                                    {(activeOrder.items || []).length > 0 && (
+                                    {activeOrder && (activeOrder.items || []).length > 0 && (
                                         <div className="mb-6">
                                             <h3 className="text-sm font-bold text-cafe-text-muted uppercase tracking-wider mb-4">Sent
                                                 to Kitchen</h3>
@@ -125,13 +125,13 @@ export default function OrderDrawer({
                                                                 className="font-bold text-cafe-text-muted">{item.quantity}x</span>
                                                             <div className="flex flex-col">
                                                                 <span
-                                                                    className="text-cafe-text-main font-medium">{item.menuItem.name}</span>
+                                                                    className="text-cafe-text-main font-medium">{item.menuItemName}</span>
                                                                 <span
                                                                     className="text-xs font-bold text-status-ready">{item.status}</span>
                                                             </div>
                                                         </div>
                                                         <span className="text-cafe-text-muted font-medium">
-                                                            ${(item.menuItem.price * item.quantity).toFixed(2)}
+                                                            ${(item.priceAtTimeOfOrderInCents * item.quantity / 100).toFixed(2)}
                                                         </span>
                                                     </li>
                                                 ))}
@@ -156,7 +156,7 @@ export default function OrderDrawer({
                                                         </div>
                                                         <div className="flex items-center gap-3">
                                                             <span className="text-cafe-text-main font-bold">
-                                                                ${(item.menuItem.price * item.quantity).toFixed(2)}
+                                                                ${((item.menuItem.priceInEuros || 0) * item.quantity).toFixed(2)}
                                                             </span>
                                                             <button
                                                                 onClick={() => onRemoveDraftItem(item.tempId)}
@@ -176,23 +176,23 @@ export default function OrderDrawer({
                                     <div
                                         className="border-t border-cafe-secondary/50 pt-4 flex justify-between items-center text-xl mb-4">
                                         <span className="font-bold text-cafe-text-main">Total</span>
-                                        <span className="font-bold text-cafe-primary">${grandTotal.toFixed(2)}</span>
+                                        <span className="font-bold text-cafe-primary">${(grandTotal || 0).toFixed(2)}</span>
                                     </div>
 
                                     <div className="grid grid-cols-2 gap-3">
                                         {isOrderingMode ? (
                                             <button
                                                 onClick={onSendToKitchen}
-                                                disabled={draftItems.length === 0}
+                                                disabled={draftItems.length === 0 || !activeOrder}
                                                 className={cn(
                                                     "col-span-2 text-white font-bold py-4 rounded-xl transition-all flex justify-center items-center gap-2 shadow-sm text-lg",
-                                                    draftItems.length > 0
+                                                    (draftItems.length > 0 && activeOrder)
                                                         ? "bg-status-preparing hover:bg-status-preparing/90 hover:scale-[1.02]"
                                                         : "bg-cafe-secondary cursor-not-allowed opacity-50"
                                                 )}
                                             >
                                                 <ChefHat className="size-icon-base"/>
-                                                {draftItems.length > 0 ? "Send to Kitchen" : "Select items..."}
+                                                {!activeOrder ? "Creating Order..." : (draftItems.length > 0 ? "Send to Kitchen" : "Select items...")}
                                             </button>
                                         ) : (
                                             <>

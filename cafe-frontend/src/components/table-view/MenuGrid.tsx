@@ -5,12 +5,13 @@ import type { Category, MenuItem } from '../../types';
 interface MenuGridProps {
     menuItems: MenuItem[];
     activeCategory: Category;
+    isLoading?: boolean;
     onSelectCategory: (category: Category) => void;
     onAddItem: (item: MenuItem) => void;
     onBack: () => void;
 }
 
-export default function MenuGrid({ menuItems, activeCategory, onSelectCategory, onAddItem, onBack }: MenuGridProps) {
+export default function MenuGrid({ menuItems, activeCategory, isLoading, onSelectCategory, onAddItem, onBack }: MenuGridProps) {
     return (
         <div className="animate-in slide-in-from-left-8 fade-in duration-300 h-full flex flex-col">
             <div className="flex items-center gap-4 mb-8">
@@ -43,18 +44,24 @@ export default function MenuGrid({ menuItems, activeCategory, onSelectCategory, 
                 ))}
             </div>
 
-            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 overflow-y-auto pb-8">
-                {menuItems.filter(item => item.category === activeCategory).map(item => (
-                    <button
-                        key={item.id}
-                        onClick={() => onAddItem(item)}
-                        className="bg-cafe-surface border-2 border-cafe-secondary rounded-2xl p-4 text-left flex flex-col h-32 hover:border-cafe-primary/50 hover:shadow-md transition-all active:scale-95"
-                    >
-                        <span className="font-bold text-cafe-text-main text-lg leading-tight mb-auto">{item.name}</span>
-                        <span className="font-bold text-cafe-accent">${item.price.toFixed(2)}</span>
-                    </button>
-                ))}
-            </div>
+            {isLoading ? (
+                <div className="flex-1 flex items-center justify-center">
+                    <div className="size-12 border-4 border-cafe-primary/30 border-t-cafe-primary rounded-full animate-spin" />
+                </div>
+            ) : (
+                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 overflow-y-auto pb-8">
+                    {menuItems.map(item => (
+                        <button
+                            key={item.id}
+                            onClick={() => onAddItem(item)}
+                            className="bg-cafe-surface border-2 border-cafe-secondary rounded-2xl p-4 text-left flex flex-col h-32 hover:border-cafe-primary/50 hover:shadow-md transition-all active:scale-95"
+                        >
+                            <span className="font-bold text-cafe-text-main text-lg leading-tight mb-auto">{item.name}</span>
+                            <span className="font-bold text-cafe-accent">${(item.priceInEuros || 0).toFixed(2)}</span>
+                        </button>
+                    ))}
+                </div>
+            )}
         </div>
     );
 }

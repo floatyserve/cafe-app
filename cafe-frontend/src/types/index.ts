@@ -1,6 +1,6 @@
 export type Category = 'MEAL' | 'DRINK' | 'DESSERT';
 
-export type OrderStatus = 'OPEN' | 'PAID';
+export type OrderState = 'OPEN' | 'PAID';
 
 export type ItemStatus = 'PENDING' | 'PREPARING' | 'READY' | 'SERVED';
 
@@ -8,28 +8,32 @@ export interface MenuItem {
     id: number;
     name: string;
     category: Category;
-    price: number;
+    priceInEuros: number;
 }
 
 export interface OrderItem {
     id: number;
-    menuItem: MenuItem;
+    menuItemId: number;
+    menuItemName: string;
+    menuItemCategory: Category;
+    priceAtTimeOfOrderInCents: number;
     quantity: number;
-    notes?: string;
+    note?: string;
     status: ItemStatus;
-    updatedAt?: number;
+    updatedAt?: string;
 }
 
 export interface Order {
     id: number;
-    tableNumber: number;
+    tableId: number;
+    state: OrderState;
+    orderedAt: string;
+    paidAt?: string;
     items: OrderItem[];
-    status: OrderStatus;
-    createdAt: string;
 }
 
 export interface DraftItem {
-    tempId: string; // Temporary ID for frontend management
+    tempId: string;
     menuItem: MenuItem;
     quantity: number;
 }
