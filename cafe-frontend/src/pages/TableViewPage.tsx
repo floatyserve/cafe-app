@@ -68,7 +68,7 @@ export default function TableViewPage() {
         if (activeOrder && (!activeOrder.items || activeOrder.items.length === 0)) {
             fetchOrderItems(activeOrder.id);
         }
-    }, [activeOrder?.id, fetchOrderItems]);
+    }, [activeOrder, fetchOrderItems]);
 
     const handleToggleTableStatus = async () => {
         if (!selectedTableId || !selectedTable) return;
