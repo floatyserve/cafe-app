@@ -40,7 +40,7 @@ export function useOrders() {
         };
     }, [handleWsMessage]);
 
-    const handlePayOrder = async (orderId: number) => {
+    const handlePayOrder = useCallback(async (orderId: number) => {
         try {
             const updatedOrder = await orderService.payOrder(orderId);
             setOrders(prev => prev.map(order =>
@@ -49,9 +49,9 @@ export function useOrders() {
         } catch (error) {
             console.error('Failed to pay order:', error);
         }
-    };
+    }, []);
 
-    const createNewOrder = async (tableId: number) => {
+    const createNewOrder = useCallback(async (tableId: number) => {
         try {
             const newOrder = await orderService.createOrder(tableId);
             setOrders(prev => [...prev, newOrder]);
@@ -60,9 +60,9 @@ export function useOrders() {
             console.error('Failed to create order:', error);
             throw error;
         }
-    };
+    }, []);
 
-    const addItemsToOrder = async (orderId: number, items: AddOrderItemRequest[]) => {
+    const addItemsToOrder = useCallback(async (orderId: number, items: AddOrderItemRequest[]) => {
         try {
             const updatedOrder = await orderService.addItemsToOrder(orderId, items);
             setOrders(prev => prev.map(order =>
@@ -73,17 +73,17 @@ export function useOrders() {
             console.error('Failed to add items to order:', error);
             throw error;
         }
-    };
+    }, []);
 
-    const updateItemStatus = async (_orderId: number, itemId: number, status: ItemStatus) => {
+    const updateItemStatus = useCallback(async (_orderId: number, itemId: number, status: ItemStatus) => {
         try {
             await orderService.updateItemStatus(itemId, status);
         } catch (error) {
             console.error('Failed to update item status:', error);
         }
-    };
+    }, []);
 
-    const fetchOrderItems = async (orderId: number) => {
+    const fetchOrderItems = useCallback(async (orderId: number) => {
         try {
             const items = await orderService.getOrderItems(orderId);
             setOrders(prev => prev.map(order =>
@@ -92,7 +92,7 @@ export function useOrders() {
         } catch (error) {
             console.error('Failed to fetch order items:', error);
         }
-    };
+    }, []);
 
     return {
         orders,

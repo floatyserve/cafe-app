@@ -53,7 +53,7 @@ export default function TableViewPage() {
         };
 
         fetchMenuCategory();
-    }, [activeCategory, isOrderingMode, menuCache]);
+    }, [activeCategory, isOrderingMode]);
 
     const getActiveOrder = (tableId: number) => {
         return orders.find(order => {
@@ -65,10 +65,10 @@ export default function TableViewPage() {
     const activeOrder = selectedTableId ? getActiveOrder(selectedTableId) : null;
 
     useEffect(() => {
-        if (activeOrder && (!activeOrder.items || activeOrder.items.length === 0)) {
+        if (activeOrder && !activeOrder.items) {
             fetchOrderItems(activeOrder.id);
         }
-    }, [activeOrder, fetchOrderItems]);
+    }, [activeOrder?.id, activeOrder?.items, fetchOrderItems]);
 
     const handleToggleTableStatus = async () => {
         if (!selectedTableId || !selectedTable) return;
@@ -153,7 +153,6 @@ export default function TableViewPage() {
 
         try {
             await addItemsToOrder(activeOrder.id, itemsToSend);
-            await fetchOrderItems(activeOrder.id);
             setDraftItems([]);
             setIsOrderingMode(false);
         } catch (error) {
