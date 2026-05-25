@@ -25,6 +25,7 @@ import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 import tools.jackson.databind.json.JsonMapper;
 
+import java.time.Clock;
 import java.time.Instant;
 import java.util.List;
 
@@ -54,6 +55,7 @@ public class OrderItemControllerTest {
     @MockitoBean private OrderItemMapper orderItemMapper;
     @MockitoBean private OrderMapper orderMapper;
     @MockitoBean private OrderNotificationService notificationService;
+    @MockitoBean private Clock clock;
 
     private final Long ORDER_ID = 100L;
     private final Long ITEM_ID = 500L;
@@ -73,6 +75,7 @@ public class OrderItemControllerTest {
                     350,
                     1,
                     null,
+                    clock.instant(),
                     OrderItemStatus.PENDING
             );
 
@@ -128,6 +131,7 @@ public class OrderItemControllerTest {
                     350,
                     1,
                     null,
+                    clock.instant(),
                     OrderItemStatus.SERVED
             );
             OrderDto expectedOrderDto = new OrderDto(ORDER_ID, 5L, OrderState.OPEN, Instant.now(), null);
