@@ -6,6 +6,7 @@ const WS_URL = import.meta.env.VITE_WS_URL || 'http://localhost:8080/ws-cafe';
 
 export const KITCHEN_TOPIC = '/topic/kitchen';
 export const BAR_TOPIC = '/topic/bar';
+export const ORDERS_TOPIC = '/topic/orders';
 
 const isTokenValid = (token: string | null) => {
     if (!token) return false;
@@ -54,6 +55,10 @@ export const createStompClient = (onMessage: (topic: string, message: unknown) =
 
         client.subscribe(BAR_TOPIC, (message) => {
             onMessage(BAR_TOPIC, JSON.parse(message.body));
+        });
+
+        client.subscribe(ORDERS_TOPIC, (message) => {
+            onMessage(ORDERS_TOPIC, JSON.parse(message.body));
         });
     };
 
