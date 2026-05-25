@@ -5,6 +5,7 @@ import com.example.cafe_system.table.domain.CafeTable;
 import com.example.cafe_system.table.repository.CafeTableRepository;
 import com.example.cafe_system.table.service.CafeTableService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -26,7 +27,7 @@ public class CafeTableServiceJpa implements CafeTableService {
 
     @Override
     public List<CafeTable> getAllTables() {
-        return cafeTableRepository.findAll();
+        return cafeTableRepository.findAll(Sort.by("number"));
     }
 
     @Override
