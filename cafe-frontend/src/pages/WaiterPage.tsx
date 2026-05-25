@@ -24,7 +24,8 @@ export default function WaiterPage() {
                 if (item.status === 'READY_TO_SERVE') return true;
 
                 if (item.status === 'SERVED') {
-                    const timeToCompare = item.updatedAt ? new Date(item.updatedAt).getTime() : new Date(order.orderedAt).getTime();
+                    const servedAt = item.updatedAt || order.orderedAt;
+                    const timeToCompare = new Date(servedAt).getTime();
                     const diffMins = (currentTime - timeToCompare) / 60000;
 
                     return diffMins <= servedItemsExpirationTimeInMinutes;
