@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useOrders } from '../hooks/useOrders';
 import { tableService, menuService } from '../api';
+import { cn } from '../lib/utils';
 import type { Category, DraftItem, Table, MenuItem } from '../types';
 
 import FloorPlan from '../components/table-view/FloorPlan';
@@ -142,13 +143,23 @@ export default function TableViewPage() {
         );
     };
 
+    const handleUpdateDraftItemNote = (tempId: string, note: string) => {
+        setDraftItems(prev =>
+            prev.map(item =>
+                item.tempId === tempId
+                    ? { ...item, note }
+                    : item
+            )
+        );
+    };
+
     const handleSendToKitchen = async () => {
         if (!activeOrder || draftItems.length === 0) return;
 
         const itemsToSend = draftItems.map(draft => ({
             menuItemId: draft.menuItem.id,
             quantity: draft.quantity,
-            note: ''
+            note: draft.note || ''
         }));
 
         try {
@@ -175,8 +186,11 @@ export default function TableViewPage() {
     }
 
     return (
-        <div className="flex h-full overflow-hidden bg-cafe-bg relative">
-            <div className="flex-1 p-8 overflow-y-auto transition-all duration-300">
+        <div className="flex h-full overflow-hidden bg-cafe-bg">
+            <div className={cn(
+                "flex-1 p-4 md:p-8 overflow-y-auto transition-all duration-300",
+                selectedTableId ? "mr-96 lg:mr-0" : ""
+            )}>
                 {!isOrderingMode ? (
                     <FloorPlan
                         tables={tables}
@@ -196,21 +210,27 @@ export default function TableViewPage() {
                 )}
             </div>
 
-            <OrderDrawer
-                selectedTableId={selectedTableId}
-                selectedTableConfig={selectedTable}
-                isTableOutOfOrder={selectedTable?.outOfOrder || false}
-                activeOrder={activeOrder}
-                isOrderingMode={isOrderingMode}
-                draftItems={draftItems}
-                onSendToKitchen={handleSendToKitchen}
-                onRemoveDraftItem={handleRemoveDraftItem}
-                onClose={handleCloseDrawer}
-                onOpenNewOrder={handleOpenTable}
-                onAddItems={() => setIsOrderingMode(true)}
-                onCheckout={handleCheckout}
-                onChangeTableStatus={handleToggleTableStatus}
-            />
+            <div className={cn(
+                "fixed inset-y-0 right-0 z-50 lg:relative lg:z-0 transition-transform duration-300 transform shadow-2xl lg:shadow-none",
+                selectedTableId ? "translate-x-0" : "translate-x-full lg:hidden"
+            )}>
+                <OrderDrawer
+                    selectedTableId={selectedTableId}
+                    selectedTableConfig={selectedTable}
+                    isTableOutOfOrder={selectedTable?.outOfOrder || false}
+                    activeOrder={activeOrder}
+                    isOrderingMode={isOrderingMode}
+                    draftItems={draftItems}
+                    onSendToKitchen={handleSendToKitchen}
+                    onRemoveDraftItem={handleRemoveDraftItem}
+                    onUpdateDraftItemNote={handleUpdateDraftItemNote}
+                    onClose={handleCloseDrawer}
+                    onOpenNewOrder={handleOpenTable}
+                    onAddItems={() => setIsOrderingMode(true)}
+                    onCheckout={handleCheckout}
+                    onChangeTableStatus={handleToggleTableStatus}
+                />
+            </div>
         </div>
     );
 }

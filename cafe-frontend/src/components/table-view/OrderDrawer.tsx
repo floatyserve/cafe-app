@@ -13,6 +13,7 @@ interface OrderDrawerProps {
     draftItems: DraftItem[];
     onSendToKitchen: () => void;
     onRemoveDraftItem: (tempId: string) => void;
+    onUpdateDraftItemNote: (tempId: string, note: string) => void;
 
     onClose: () => void;
     onOpenNewOrder: () => void;
@@ -27,9 +28,10 @@ export default function OrderDrawer({
                                         activeOrder,
                                         isOrderingMode,
                                         isTableOutOfOrder,
-                                        draftItems = [], // Default to empty array
+                                        draftItems = [],
                                         onSendToKitchen,
                                         onRemoveDraftItem,
+                                        onUpdateDraftItemNote,
                                         onClose,
                                         onOpenNewOrder,
                                         onAddItems,
@@ -53,7 +55,7 @@ export default function OrderDrawer({
                         isTableOutOfOrder ? "bg-action-danger" : "bg-cafe-primary"
                     )}>
                         <div>
-                            <h2 className="text-2xl font-bold">Table {selectedTableId}</h2>
+                            <h2 className="text-2xl font-bold">Table {selectedTableConfig?.number}</h2>
                             <p className="text-white/80 text-sm">
                                 {isTableOutOfOrder ? "Out of Order" : `${selectedTableConfig?.capacity} Seats`}
                             </p>
@@ -140,31 +142,39 @@ export default function OrderDrawer({
                                     )}
 
                                     {draftItems.length > 0 && (
-                                        <div
-                                            className="bg-orange-50 dark:bg-orange-950/20 p-3 rounded-xl border border-orange-200 dark:border-orange-900/50">
-                                            <h3 className="text-sm font-bold text-orange-600 dark:text-orange-400 uppercase tracking-wider mb-3 flex items-center gap-2">
+                                        <div className="bg-cafe-surface-hover/50 p-3 rounded-xl border border-cafe-secondary">
+                                            <h3 className="text-sm font-bold text-cafe-primary uppercase tracking-wider mb-3 flex items-center gap-2">
                                                 <ChefHat className="size-icon-sm"/> Unsent Items
                                             </h3>
                                             <ul className="space-y-3">
                                                 {draftItems.map((item) => (
-                                                    <li key={item.tempId} className="flex justify-between items-center">
-                                                        <div className="flex gap-2">
-                                                            <span
-                                                                className="font-bold text-orange-500">{item.quantity}x</span>
-                                                            <span
-                                                                className="text-cafe-text-main font-bold">{item.menuItem.name}</span>
+                                                    <li key={item.tempId} className="flex flex-col gap-2">
+                                                        <div className="flex justify-between items-center">
+                                                            <div className="flex gap-2">
+                                                                <span
+                                                                    className="font-bold text-cafe-accent">{item.quantity}x</span>
+                                                                <span
+                                                                    className="text-cafe-text-main font-bold">{item.menuItem.name}</span>
+                                                            </div>
+                                                            <div className="flex items-center gap-3">
+                                                                <span className="text-cafe-text-main font-bold">
+                                                                    ${((item.menuItem.priceInEuros || 0) * item.quantity).toFixed(2)}
+                                                                </span>
+                                                                <button
+                                                                    onClick={() => onRemoveDraftItem(item.tempId)}
+                                                                    className="text-action-danger hover:text-action-danger-hover p-1 rounded-md transition-colors"
+                                                                >
+                                                                    <Trash2 className="size-icon-sm"/>
+                                                                </button>
+                                                            </div>
                                                         </div>
-                                                        <div className="flex items-center gap-3">
-                                                            <span className="text-cafe-text-main font-bold">
-                                                                ${((item.menuItem.priceInEuros || 0) * item.quantity).toFixed(2)}
-                                                            </span>
-                                                            <button
-                                                                onClick={() => onRemoveDraftItem(item.tempId)}
-                                                                className="text-red-400 hover:text-red-600 p-1 rounded-md transition-colors"
-                                                            >
-                                                                <Trash2 className="size-icon-sm"/>
-                                                            </button>
-                                                        </div>
+                                                        <input
+                                                            type="text"
+                                                            placeholder="Add note..."
+                                                            value={item.note || ''}
+                                                            onChange={(e) => onUpdateDraftItemNote(item.tempId, e.target.value)}
+                                                            className="text-sm bg-cafe-surface border border-cafe-secondary rounded-lg px-3 py-1.5 focus:outline-none focus:ring-1 focus:ring-cafe-accent placeholder:text-cafe-text-muted/50 text-cafe-text-main"
+                                                        />
                                                     </li>
                                                 ))}
                                             </ul>

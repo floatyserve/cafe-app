@@ -37,6 +37,7 @@ export interface DraftItem {
     tempId: string;
     menuItem: MenuItem;
     quantity: number;
+    note?: string;
 }
 
 export interface Table {
