@@ -5,7 +5,7 @@ import { cn } from '../../lib/utils';
 const CARD_STYLES: Record<ItemStatus, string> = {
     PENDING: "bg-cafe-surface border-cafe-secondary/50",
     PREPARING: "bg-status-preparing/10 border-status-preparing/50",
-    READY: "bg-status-ready/10 border-status-ready/50",
+    READY_TO_SERVE: "bg-status-ready/10 border-status-ready/50",
     SERVED: "bg-cafe-surface-hover opacity-60 grayscale border-cafe-secondary/50"
 };
 
@@ -34,7 +34,7 @@ export default function KanbanItemCard({ orderId, item, createdAt, currentTime, 
     const timeText = diffMins < 1 ? 'Just now' : `${diffMins}m`;
     const isUrgent = diffMins >= 15;
 
-    const verbs = CATEGORY_VERBS[item.menuItem.category];
+    const verbs = CATEGORY_VERBS[item.menuItemCategory];
 
     return (
         <div className={cn(
@@ -46,7 +46,7 @@ export default function KanbanItemCard({ orderId, item, createdAt, currentTime, 
 
                 <div className={cn(
                     "flex items-center gap-1 text-sm font-medium px-2 py-1 rounded-md transition-colors",
-                    isUrgent && item.status !== 'READY' && item.status !== 'SERVED'
+                    isUrgent && item.status !== 'READY_TO_SERVE' && item.status !== 'SERVED'
                         ? "bg-status-urgent-bg text-status-urgent-text"
                         : "bg-cafe-surface-hover text-cafe-text-muted"
                 )}>
@@ -57,14 +57,14 @@ export default function KanbanItemCard({ orderId, item, createdAt, currentTime, 
 
             <div className="flex gap-2 text-cafe-text-main font-medium text-lg mb-1">
                 <span className="text-cafe-accent font-bold">{item.quantity}x</span>
-                <span className={(item.status === 'READY' || item.status === 'SERVED') ? "line-through opacity-60" : ""}>
-                    {item.menuItem.name}
+                <span className={(item.status === 'READY_TO_SERVE' || item.status === 'SERVED') ? "line-through opacity-60" : ""}>
+                    {item.menuItemName}
                 </span>
             </div>
 
-            {item.notes && (
+            {item.note && (
                 <p className="text-sm text-cafe-text-muted italic mb-3 border-l-2 border-cafe-secondary pl-2">
-                    * {item.notes}
+                    * {item.note}
                 </p>
             )}
 
@@ -88,7 +88,7 @@ export default function KanbanItemCard({ orderId, item, createdAt, currentTime, 
                             <RotateCcw className="size-icon-base" />
                         </button>
                         <button
-                            onClick={() => onUpdateStatus(orderId, item.id, 'READY')}
+                            onClick={() => onUpdateStatus(orderId, item.id, 'READY_TO_SERVE')}
                             className={cn(PRIMARY_BTN_BASE, "bg-status-preparing")}
                         >
                             <Check className="size-icon-sm" /> Done
@@ -96,7 +96,7 @@ export default function KanbanItemCard({ orderId, item, createdAt, currentTime, 
                     </>
                 )}
 
-                {item.status === 'READY' && (
+                {item.status === 'READY_TO_SERVE' && (
                     <>
                         {viewContext === 'kitchen' ? (
                             <button
@@ -127,7 +127,7 @@ export default function KanbanItemCard({ orderId, item, createdAt, currentTime, 
 
                 {item.status === 'SERVED' && (
                     <button
-                        onClick={() => onUpdateStatus(orderId, item.id, 'READY')}
+                        onClick={() => onUpdateStatus(orderId, item.id, 'READY_TO_SERVE')}
                         className="flex-1 border-2 border-cafe-secondary text-cafe-text-muted font-bold py-3 rounded-lg hover:bg-cafe-surface-hover flex justify-center items-center gap-2 transition-colors"
                     >
                         <RotateCcw className="size-icon-sm" /> Undo Serving

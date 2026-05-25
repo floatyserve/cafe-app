@@ -2,7 +2,7 @@ export type Category = 'MEAL' | 'DRINK' | 'DESSERT';
 
 export type OrderState = 'OPEN' | 'PAID';
 
-export type ItemStatus = 'PENDING' | 'PREPARING' | 'READY' | 'SERVED';
+export type ItemStatus = 'PENDING' | 'PREPARING' | 'READY_TO_SERVE' | 'SERVED';
 
 export interface MenuItem {
     id: number;
@@ -13,14 +13,15 @@ export interface MenuItem {
 
 export interface OrderItem {
     id: number;
+    orderId: number;
     menuItemId: number;
     menuItemName: string;
     menuItemCategory: Category;
     priceAtTimeOfOrderInCents: number;
     quantity: number;
     note?: string;
+    updatedAt: string;
     status: ItemStatus;
-    updatedAt?: string;
 }
 
 export interface Order {
@@ -29,7 +30,7 @@ export interface Order {
     state: OrderState;
     orderedAt: string;
     paidAt?: string;
-    items: OrderItem[];
+    items?: OrderItem[];
 }
 
 export interface DraftItem {

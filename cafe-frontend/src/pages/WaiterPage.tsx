@@ -5,7 +5,7 @@ import KanbanGrid, { type ColumnConfig } from '../components/shared/KanbanGrid';
 import {useCurrentTime} from "../hooks/useCurrentTime.ts";
 
 const COLUMNS: ColumnConfig[] = [
-    { title: 'Ready for Pickup', status: 'READY', badgeClass: 'bg-status-ready' },
+    { title: 'Ready for Pickup', status: 'READY_TO_SERVE', badgeClass: 'bg-status-ready' },
     { title: 'Served to Table', status: 'SERVED', badgeClass: 'bg-cafe-secondary text-cafe-text-main' }
 ];
 
@@ -21,7 +21,7 @@ export default function WaiterPage() {
     const waiterItems = orders.flatMap(order =>
         (order.items || [])
             .filter(item => {
-                if (item.status === 'READY') return true;
+                if (item.status === 'READY_TO_SERVE') return true;
 
                 if (item.status === 'SERVED') {
                     const timeToCompare = item.updatedAt ? new Date(item.updatedAt).getTime() : new Date(order.orderedAt).getTime();

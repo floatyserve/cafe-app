@@ -7,7 +7,7 @@ import {useOrders} from "../hooks/useOrders.ts";
 const COLUMNS: ColumnConfig[] = [
     {title: 'Pending', status: 'PENDING', badgeClass: 'bg-status-pending'},
     {title: 'Preparing', status: 'PREPARING', badgeClass: 'bg-status-preparing'},
-    {title: 'Ready to Serve', status: 'READY', badgeClass: 'bg-status-ready'}
+    {title: 'Ready to Serve', status: 'READY_TO_SERVE', badgeClass: 'bg-status-ready'}
 ];
 
 export default function BarPage() {
