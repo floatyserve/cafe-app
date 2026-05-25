@@ -47,7 +47,7 @@ export default function LoginForm() {
           value={username}
           onChange={setUsername}
           icon={User}
-          placeholder="Enter your username"
+          placeholder={t('auth.usernamePlaceholder')}
         />
 
         <LoginFormInput

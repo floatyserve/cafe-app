@@ -4,13 +4,13 @@ import { useOrders } from '../hooks/useOrders';
 import KanbanGrid, { type ColumnConfig } from '../components/shared/KanbanGrid';
 import {useCurrentTime} from "../hooks/useCurrentTime.ts";
 
-const COLUMNS: ColumnConfig[] = [
-    { title: 'Ready for Pickup', status: 'READY_TO_SERVE', badgeClass: 'bg-status-ready' },
-    { title: 'Served to Table', status: 'SERVED', badgeClass: 'bg-cafe-secondary text-cafe-text-main' }
-];
-
 export default function WaiterPage() {
     const { t } = useTranslation();
+
+    const COLUMNS: ColumnConfig[] = [
+        { title: t('kanban.columns.readyPickup'), status: 'READY_TO_SERVE', badgeClass: 'bg-status-ready' },
+        { title: t('kanban.columns.served'), status: 'SERVED', badgeClass: 'bg-cafe-secondary text-cafe-text-main' }
+    ];
 
     const { orders, updateItemStatus } = useOrders();
 
@@ -44,7 +44,7 @@ export default function WaiterPage() {
         <div className="p-6 h-full flex flex-col overflow-hidden bg-cafe-bg">
             <h1 className="text-3xl font-bold text-cafe-primary mb-6 flex items-center gap-3">
                 <BellRing className="size-icon-lg text-cafe-accent" />
-                {t('nav.waiter')} Expeditor
+                {t('nav.waiter')}
             </h1>
 
             <KanbanGrid

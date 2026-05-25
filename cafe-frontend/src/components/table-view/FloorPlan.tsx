@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next';
 import { Users, Map } from 'lucide-react';
 import { cn } from '../../lib/utils';
 import type { Order, Table } from '../../types';
@@ -25,11 +26,13 @@ const getTableColorClasses = (isOccupied: boolean, isOutOfOrder: boolean): strin
 };
 
 export default function FloorPlan({ tables, selectedTableId, onSelectTable, getActiveOrder }: FloorPlanProps) {
+    const { t } = useTranslation();
+
     return (
         <div className="animate-in fade-in zoom-in-95 duration-200">
             <h1 className="text-3xl font-bold text-cafe-primary mb-8 flex items-center gap-3">
                 <Map className="size-icon-lg text-cafe-accent" />
-                Floor Plan
+                {t('floorPlan.title')}
             </h1>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-8 max-w-4xl mx-auto">
                 {tables.map((table) => {

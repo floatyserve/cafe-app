@@ -21,10 +21,74 @@
     "login": "Prihlásiť sa",
     "username": "Používateľské meno",
     "password": "Heslo",
+    "usernamePlaceholder": "Zadajte používateľské meno",
     "signIn": "Prihlásiť sa",
     "error": "Nesprávne meno alebo heslo",
     "welcome": "Vitajte späť!",
     "subtitle": "Zadajte svoje údaje pre prístup do systému",
     "logout": "Odhlásiť sa"
+  },
+  "floorPlan": {
+    "title": "Plán podlahy"
+  },
+  "menu": {
+    "title": "Menu",
+    "categories": {
+      "DRINK": "Nápoje",
+      "MEAL": "Jedlo",
+      "DESSERT": "Dezerty"
+    }
+  },
+  "orderDrawer": {
+    "table": "Stôl {{number}}",
+    "outOfOrder": "Mimo prevádzky",
+    "seats": "{{capacity}} Miesta",
+    "tableUnavailable": "Stôl nedostupný",
+    "tableOutOfOrderDesc": "Tento stôl je momentálne mimo prevádzky.",
+    "restoreTable": "Obnoviť stôl",
+    "tableAvailable": "Stôl je voľný",
+    "tableAvailableDesc": "Otvorte novú objednávku a začnite pridávať položky.",
+    "openNewOrder": "Otvoriť novú objednávku",
+    "markOutOfOrder": "Označiť ako mimo prevádzky",
+    "sentForPreparing": "Odoslané na prípravu",
+    "unsentItems": "Neodoslané položky",
+    "addNote": "Pridať poznámku...",
+    "total": "Celkom",
+    "creatingOrder": "Vytváram objednávku...",
+    "sendToKitchen": "Odoslať do kuchyne",
+    "selectItems": "Vyberte položky...",
+    "addItems": "Pridať položky",
+    "checkout": "Zaplatiť"
+  },
+  "kanban": {
+    "order": "Objednávka #{{id}}",
+    "justNow": "Práve teraz",
+    "minutesAgo": "{{count}}m",
+    "statuses": {
+      "PENDING": "Čakajúce",
+      "PREPARING": "Pripravuje sa",
+      "READY": "Pripravené",
+      "READY_TO_SERVE": "Pripravené na podávanie",
+      "SERVED": "Podané"
+    },
+    "columns": {
+      "pending": "Čakajúce",
+      "cooking": "Varí sa",
+      "readyExpeditor": "Pripravené na expedíciu",
+      "readyServe": "Pripravené na podávanie",
+      "readyPickup": "Pripravené na odber",
+      "served": "Podáne",
+      "preparing": "Pripravuje sa"
+    },
+    "actions": {
+      "cook": "Variť",
+      "prepare": "Pripraviť",
+      "undoCooking": "Vrátiť k vareniu",
+      "undoPreparing": "Vrátiť k príprave",
+      "undoPending": "Vrátiť medzi čakajúce",
+      "done": "Hotovo",
+      "serve": "Podať",
+      "undoServing": "Vrátiť k podávaniu"
+    }
   }
 }

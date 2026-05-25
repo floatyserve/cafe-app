@@ -21,10 +21,74 @@
     "login": "Login",
     "username": "Username",
     "password": "Password",
+    "usernamePlaceholder": "Enter your username",
     "signIn": "Sign In",
     "error": "Invalid username or password",
     "welcome": "Welcome!",
     "subtitle": "Please enter your credentials to access the system",
     "logout": "Log Out"
+  },
+  "floorPlan": {
+    "title": "Floor Plan"
+  },
+  "menu": {
+    "title": "Menu",
+    "categories": {
+      "DRINK": "Drink",
+      "MEAL": "Meal",
+      "DESSERT": "Dessert"
+    }
+  },
+  "orderDrawer": {
+    "table": "Table {{number}}",
+    "outOfOrder": "Out of Order",
+    "seats": "{{capacity}} Seats",
+    "tableUnavailable": "Table Unavailable",
+    "tableOutOfOrderDesc": "This table is currently out of order.",
+    "restoreTable": "Restore Table",
+    "tableAvailable": "Table is available",
+    "tableAvailableDesc": "Open a new ticket to start adding items.",
+    "openNewOrder": "Open New Order",
+    "markOutOfOrder": "Mark as Out of Order",
+    "sentForPreparing": "Sent for Preparing",
+    "unsentItems": "Unsent Items",
+    "addNote": "Add note...",
+    "total": "Total",
+    "creatingOrder": "Creating Order...",
+    "sendToKitchen": "Send to Kitchen",
+    "selectItems": "Select items...",
+    "addItems": "Add Items",
+    "checkout": "Checkout"
+  },
+  "kanban": {
+    "order": "Order #{{id}}",
+    "justNow": "Just now",
+    "minutesAgo": "{{count}}m",
+    "statuses": {
+      "PENDING": "Pending",
+      "PREPARING": "Preparing",
+      "READY": "Ready",
+      "READY_TO_SERVE": "Ready to Serve",
+      "SERVED": "Served"
+    },
+    "columns": {
+      "pending": "Pending",
+      "cooking": "Cooking",
+      "readyExpeditor": "Ready for Expeditor",
+      "readyServe": "Ready to Serve",
+      "readyPickup": "Ready for Pickup",
+      "served": "Served to Table",
+      "preparing": "Preparing"
+    },
+    "actions": {
+      "cook": "Cook",
+      "prepare": "Prepare",
+      "undoCooking": "Undo to Cooking",
+      "undoPreparing": "Undo to Preparing",
+      "undoPending": "Undo to Pending",
+      "done": "Done",
+      "serve": "Serve",
+      "undoServing": "Undo Serving"
+    }
   }
 }

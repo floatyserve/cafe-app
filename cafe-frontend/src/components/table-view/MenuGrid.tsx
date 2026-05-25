@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next';
 import { ChevronLeft, Coffee } from 'lucide-react';
 import { cn } from '../../lib/utils';
 import type { Category, MenuItem } from '../../types';
@@ -12,6 +13,8 @@ interface MenuGridProps {
 }
 
 export default function MenuGrid({ menuItems, activeCategory, isLoading, onSelectCategory, onAddItem, onBack }: MenuGridProps) {
+    const { t } = useTranslation();
+
     return (
         <div className="animate-in slide-in-from-left-8 fade-in duration-300 h-full flex flex-col">
             <div className="flex items-center gap-4 mb-8">
@@ -23,7 +26,7 @@ export default function MenuGrid({ menuItems, activeCategory, isLoading, onSelec
                 </button>
                 <h1 className="text-3xl font-bold text-cafe-primary flex items-center gap-3">
                     <Coffee className="size-icon-lg text-cafe-accent" />
-                    Menu
+                    {t('menu.title')}
                 </h1>
             </div>
 
@@ -39,7 +42,7 @@ export default function MenuGrid({ menuItems, activeCategory, isLoading, onSelec
                                 : "bg-cafe-surface border-2 border-cafe-secondary text-cafe-text-muted hover:bg-cafe-surface-hover"
                         )}
                     >
-                        {category}
+                        {t(`menu.categories.${category}`)}
                     </button>
                 ))}
             </div>

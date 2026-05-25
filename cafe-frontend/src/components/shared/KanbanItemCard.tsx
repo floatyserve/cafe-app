@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next';
 import { RotateCcw, Clock, Check } from 'lucide-react';
 import type { OrderItem, ItemStatus, Category } from '../../types';
 import { cn } from '../../lib/utils';
@@ -12,12 +13,6 @@ const CARD_STYLES: Record<ItemStatus, string> = {
 const PRIMARY_BTN_BASE = "flex-1 text-white font-bold py-3 rounded-lg hover:opacity-90 transition-opacity flex justify-center items-center gap-2";
 const UNDO_BTN_BASE = "p-3 border-2 border-cafe-secondary rounded-lg text-cafe-text-muted hover:bg-cafe-surface-hover transition-all flex justify-center items-center";
 
-const CATEGORY_VERBS: Record<Category, { start: string, undo: string }> = {
-    MEAL: { start: 'Cook', undo: 'Undo to Cooking' },
-    DRINK: { start: 'Prepare', undo: 'Undo to Preparing' },
-    DESSERT: { start: 'Prepare', undo: 'Undo to Preparing' }
-};
-
 interface KanbanItemCardProps {
     orderId: number;
     item: OrderItem;
@@ -28,11 +23,18 @@ interface KanbanItemCardProps {
 }
 
 export default function KanbanItemCard({ orderId, item, createdAt, currentTime, onUpdateStatus, viewContext = 'waiter' }: KanbanItemCardProps) {
+    const { t } = useTranslation();
 
     const start = new Date(createdAt).getTime();
     const diffMins = Math.floor((currentTime - start) / 60000);
-    const timeText = diffMins < 1 ? 'Just now' : `${diffMins}m`;
+    const timeText = diffMins < 1 ? t('kanban.justNow') : t('kanban.minutesAgo', { count: diffMins });
     const isUrgent = diffMins >= 15;
+
+    const CATEGORY_VERBS: Record<Category, { start: string, undo: string }> = {
+        MEAL: { start: t('kanban.actions.cook'), undo: t('kanban.actions.undoCooking') },
+        DRINK: { start: t('kanban.actions.prepare'), undo: t('kanban.actions.undoPreparing') },
+        DESSERT: { start: t('kanban.actions.prepare'), undo: t('kanban.actions.undoPreparing') }
+    };
 
     const verbs = CATEGORY_VERBS[item.menuItemCategory];
 
@@ -42,7 +44,7 @@ export default function KanbanItemCard({ orderId, item, createdAt, currentTime, 
             CARD_STYLES[item.status]
         )}>
             <div className="flex justify-between items-center border-b border-cafe-secondary/50 pb-2 mb-3">
-                <span className="font-bold text-cafe-primary">Order #{orderId}</span>
+                <span className="font-bold text-cafe-primary">{t('kanban.order', { id: orderId })}</span>
 
                 <div className={cn(
                     "flex items-center gap-1 text-sm font-medium px-2 py-1 rounded-md transition-colors",
@@ -83,7 +85,7 @@ export default function KanbanItemCard({ orderId, item, createdAt, currentTime, 
                         <button
                             onClick={() => onUpdateStatus(orderId, item.id, 'PENDING')}
                             className={UNDO_BTN_BASE}
-                            title="Undo to Pending"
+                            title={t('kanban.actions.undoPending')}
                         >
                             <RotateCcw className="size-icon-base" />
                         </button>
@@ -91,7 +93,7 @@ export default function KanbanItemCard({ orderId, item, createdAt, currentTime, 
                             onClick={() => onUpdateStatus(orderId, item.id, 'READY_TO_SERVE')}
                             className={cn(PRIMARY_BTN_BASE, "bg-status-preparing")}
                         >
-                            <Check className="size-icon-sm" /> Done
+                            <Check className="size-icon-sm" /> {t('kanban.actions.done')}
                         </button>
                     </>
                 )}
@@ -118,7 +120,7 @@ export default function KanbanItemCard({ orderId, item, createdAt, currentTime, 
                                     onClick={() => onUpdateStatus(orderId, item.id, 'SERVED')}
                                     className={cn(PRIMARY_BTN_BASE, "bg-status-ready")}
                                 >
-                                    Serve
+                                    {t('kanban.actions.serve')}
                                 </button>
                             </>
                         )}
@@ -130,7 +132,7 @@ export default function KanbanItemCard({ orderId, item, createdAt, currentTime, 
                         onClick={() => onUpdateStatus(orderId, item.id, 'READY_TO_SERVE')}
                         className="flex-1 border-2 border-cafe-secondary text-cafe-text-muted font-bold py-3 rounded-lg hover:bg-cafe-surface-hover flex justify-center items-center gap-2 transition-colors"
                     >
-                        <RotateCcw className="size-icon-sm" /> Undo Serving
+                        <RotateCcw className="size-icon-sm" /> {t('kanban.actions.undoServing')}
                     </button>
                 )}
             </div>

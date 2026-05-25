@@ -4,14 +4,15 @@ import {useCurrentTime} from '../hooks/useCurrentTime';
 import KanbanGrid, {type ColumnConfig} from '../components/shared/KanbanGrid';
 import {useOrders} from "../hooks/useOrders.ts";
 
-const COLUMNS: ColumnConfig[] = [
-    {title: 'Pending', status: 'PENDING', badgeClass: 'bg-status-pending'},
-    {title: 'Preparing', status: 'PREPARING', badgeClass: 'bg-status-preparing'},
-    {title: 'Ready to Serve', status: 'READY_TO_SERVE', badgeClass: 'bg-status-ready'}
-];
-
 export default function BarPage() {
     const {t} = useTranslation();
+
+    const COLUMNS: ColumnConfig[] = [
+        {title: t('kanban.columns.pending'), status: 'PENDING', badgeClass: 'bg-status-pending'},
+        {title: t('kanban.columns.preparing'), status: 'PREPARING', badgeClass: 'bg-status-preparing'},
+        {title: t('kanban.columns.readyServe'), status: 'READY_TO_SERVE', badgeClass: 'bg-status-ready'}
+    ];
+
     const currentTime = useCurrentTime(60000);
 
     const {orders, updateItemStatus} = useOrders();
