@@ -3,6 +3,8 @@ package com.example.cafe_system.order.api.dto;
 import com.example.cafe_system.menu_item.domain.MenuItemCategory;
 import com.example.cafe_system.order.domain.OrderItemStatus;
 
+import java.time.Instant;
+
 public record OrderItemDto(
         Long id,
         Long orderId,
@@ -12,6 +14,7 @@ public record OrderItemDto(
         int priceAtTimeOfOrderInCents,
         int quantity,
         String note,
+        Instant updatedAt,
         OrderItemStatus status
 ) {
 }
