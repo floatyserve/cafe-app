@@ -5,7 +5,6 @@ import com.example.cafe_system.menu_item.domain.MenuItemCategory;
 import com.example.cafe_system.menu_item.repository.MenuItemRepository;
 import com.example.cafe_system.order.api.dto.CreateOrderRequest;
 import com.example.cafe_system.order.domain.OrderState;
-import com.example.cafe_system.order.repository.OrderRepository;
 import com.example.cafe_system.table.domain.CafeTable;
 import com.example.cafe_system.table.repository.CafeTableRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -13,6 +12,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.http.MediaType;
+import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import tools.jackson.databind.json.JsonMapper;
@@ -24,6 +24,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @AutoConfigureMockMvc
+@Sql(scripts = "/cleanup.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
 public class OrderFlowIT extends BaseIT {
 
     @Autowired
@@ -38,17 +39,10 @@ public class OrderFlowIT extends BaseIT {
     @Autowired
     private MenuItemRepository menuItemRepository;
 
-    @Autowired
-    private OrderRepository orderRepository;
-
     private Long tableId;
 
     @BeforeEach
     void setUp() {
-        orderRepository.deleteAll();
-        menuItemRepository.deleteAll();
-        tableRepository.deleteAll();
-
         tableId = tableRepository.save(new CafeTable(1, 4)).getId();
         menuItemRepository.save(new MenuItem("Latte", 450, MenuItemCategory.DRINK));
     }

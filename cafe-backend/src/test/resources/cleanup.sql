@@ -1,0 +1,1 @@
+TRUNCATE TABLE cafe_order, cafe_table, menu_item RESTART IDENTITY CASCADE;
