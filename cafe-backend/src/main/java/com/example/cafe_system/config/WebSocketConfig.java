@@ -11,6 +11,7 @@ import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerCo
 public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 
     private static final String[] allowedOrigins = new String[]{
+            "http://localhost",
             "http://localhost:5173",
             "http://localhost:5174"
     };

@@ -33,6 +33,7 @@ import java.util.List;
 public class SecurityConfig {
 
     private static final List<String> allowedOrigins = List.of(
+            "http://localhost",
             "http://localhost:5173",
             "http://localhost:5174"
     );
