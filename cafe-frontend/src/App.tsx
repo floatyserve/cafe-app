@@ -9,7 +9,6 @@ import TableViewPage from "./pages/TableViewPage.tsx";
 import LoginPage from "./pages/LoginPage.tsx";
 import ProtectedRoute from "./components/auth/ProtectedRoute.tsx";
 import { authService } from "./api";
-import { OrdersProvider } from "./context/OrdersContext";
 
 function LoginRedirect() {
     return authService.isAuthenticated() ? <Navigate to="/waiter" replace /> : <LoginPage />;
@@ -18,27 +17,25 @@ function LoginRedirect() {
 export default function App() {
     return (
         <ThemeProvider defaultTheme="system" storageKey="cafe-ui-theme">
-            <OrdersProvider>
-                <BrowserRouter>
-                    <Routes>
-                        <Route path="/login" element={<LoginRedirect/>}/>
-                        
-                        <Route element={<ProtectedRoute />}>
-                            <Route element={<AppLayout/>}>
-                                <Route path="/" element={<Navigate to="/waiter" replace/>}/>
+            <BrowserRouter>
+                <Routes>
+                    <Route path="/login" element={<LoginRedirect/>}/>
+                    
+                    <Route element={<ProtectedRoute />}>
+                        <Route element={<AppLayout/>}>
+                            <Route path="/" element={<Navigate to="/waiter" replace/>}/>
 
-                                <Route path="/waiter" element={<WaiterPage/>}/>
-                                <Route path="/kitchen" element={<KitchenPage/>}/>
-                                <Route path="/bar" element={<BarPage/>}/>
-                                <Route path="/table-view" element={<TableViewPage/>}/>
-                                <Route path="/settings" element={<SettingsPage/>}/>
-                            </Route>
+                            <Route path="/waiter" element={<WaiterPage/>}/>
+                            <Route path="/kitchen" element={<KitchenPage/>}/>
+                            <Route path="/bar" element={<BarPage/>}/>
+                            <Route path="/table-view" element={<TableViewPage/>}/>
+                            <Route path="/settings" element={<SettingsPage/>}/>
                         </Route>
+                    </Route>
 
-                        <Route path="*" element={<Navigate to="/waiter" replace />} />
-                    </Routes>
-                </BrowserRouter>
-            </OrdersProvider>
+                    <Route path="*" element={<Navigate to="/waiter" replace />} />
+                </Routes>
+            </BrowserRouter>
         </ThemeProvider>
     );
 }
